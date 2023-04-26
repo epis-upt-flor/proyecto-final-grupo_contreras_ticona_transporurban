@@ -1,0 +1,66 @@
+﻿@model Project.DTO.Ubicacion
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Details</title>
+</head>
+<body>
+    <div>
+        <h4>Ubicacion</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.IdRutas)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.IdRutas)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Descripcion)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Descripcion)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Titulo)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Titulo)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Latitud)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Latitud)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Longitud)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Longitud)
+            </dd>
+    
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+</body>
+</html>
