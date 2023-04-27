@@ -1,0 +1,134 @@
+﻿@model IEnumerable<Project.DTO.Ubicacion>
+@{
+    Layout = null;
+    List<Project.DTO.Transporte> transportes = ViewBag.Transportes;
+    double latitudLinea = 0;
+    double longitudLinea = 0;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Google Map Location Picker</title>
+    <!-- Bootstrap y Jquery -->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css" />
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <!-- Fin -->
+    <!-- Complementos de JQuery -->
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=places&key=AIzaSyB60bIrSUlI-80w4hhJ4tdLNj5LJMIpxKs"></script>
+    <script src="~/Script/locationpicker.jquery.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                @using (Html.BeginForm("Create", "Map"))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-group">
+                        <label for="Ubicacion">Ubicación</label>
+                        <input type="text" id="Id" name="Id" hidden />
+                        <input type="text" id="IdTransporte" name="IdTransporte" hidden />
+                        <input type="text" id="Ubicacion1" name="Ubicacion1" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <div id="ModalMapPreview" style="width:100%; height:300px;"></div>
+                    </div>
+                    <!-- Latitud y Longitud -->
+                    <div class="form-group">
+                        <label for="Lat">lat.:</label>
+                        <input id="Latitud" name="Latitud" class="form-control" value="-17.99426" />
+                        <label for="Long">long.:</label>
+                        <input id="Longitud" name="Longitud" class="form-control" value="-70.251855" />
+                    </div>
+                    <!-- Botones -->
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-success">Agregar</button>
+                        @*<button type="reset" class="btn btn-default">Limpiar</button>*@
+                        <a href="~/Map/Index" class="btn btn-primary">Regresar</a>
+                        @*@Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })*@
+                    </div>
+                }
+            </div>
+            <div class="col-md-8">
+                <br />
+                <h1>Ubicaciones</h1>
+                <table class="table">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.IdTransporte)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Ubicacion1)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Latitud)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Longitud)
+                        </th>
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            @foreach (var transporteId in transportes)
+                            {
+                                if (transporteId.Id == item.IdTransporte)
+                                {
+                                    <th>
+                                        @Html.DisplayFor(x => transporteId.Nombre)
+                                    </th>
+                                    latitudLinea = Convert.ToDouble(transporteId.Latitud);
+                                    longitudLinea = Convert.ToDouble(transporteId.Longitud);
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Ubicacion1)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Latitud)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Longitud)
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+                                    </td>
+                                }
+                            }
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        var lat = '@latitudLinea';
+        var long = '@longitudLinea';
+        $('#ModalMapPreview').locationpicker({
+            radius: 0,
+            location: {
+                latitude: lat,
+                longitude: long
+            },
+            enableAutocomplete: true,
+            inputBinding: {
+                latitudeInput: $('#Latitud'),
+                longitudeInput: $('#Longitud'),
+                locationNameInput: $('#Ubicacion1')
+            },
+            onchanged: function (currentLocation, radius, isMarkerDropped) {
+                $('#ubicacion').html($('#ModalMapaddress').val());
+            }
+        });
+        $('#ModalMap').on('shown.bs.modal', function () {
+            $('#ModalMapPreview').locationpicker('autosize');
+        });
+    </script>
+</body>
+</html>

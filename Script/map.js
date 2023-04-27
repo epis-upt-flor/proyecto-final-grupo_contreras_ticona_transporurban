@@ -344,18 +344,19 @@ function Commutes(configuration) {
      * Initializes the bottom panel for updating map view and displaying commutes
      * info.
      */
+    //TODO: se modifico el titulo de add destination por AGREGAR RUTA
     function initCommutesPanel() {
         const addCommutesButtonEls = document.querySelectorAll('.add-button');
         addCommutesButtonEls.forEach(addButton => {
             addButton.addEventListener('click', () => {
-                destinationModalEl.title.innerHTML = 'Add destination';
+                destinationModalEl.title.innerHTML = 'AGREGAR RUTA';
                 hideElement(destinationModalEl.deleteButton);
                 hideElement(destinationModalEl.editButton);
                 showElement(destinationModalEl.addButton);
                 showModal();
                 const travelModeEnum = configuration.defaultTravelModeEnum || TravelMode.DRIVING;
                 const travelModeId = travelModeEnum.toLowerCase() + '-mode';
-                document.forms['destination-form'][travelModeId].checked = true;
+                document.forms['destination-form'][travelModeId].checked = true;                
             });
         });
 
@@ -396,7 +397,7 @@ function Commutes(configuration) {
             fields: ['place_id', 'geometry', 'name'],
         };
         const autocomplete = new google.maps.places.Autocomplete(
-            destinationModalEl.destinationInput, autocompleteOptions);
+            destinationModalEl.destinationInput, autocompleteOptions);        
         let destinationToAdd;
         autocomplete.addListener('place_changed', () => {
             const place = autocomplete.getPlace();
@@ -408,8 +409,8 @@ function Commutes(configuration) {
             }
             destinationModalEl.destinationInput.classList.remove('error');
             destinationModalEl.errorMessage.innerHTML = '';
-        });
-
+        });   
+        
         destinationModalEl.addButton.addEventListener('click', () => {
             const isValidInput = validateDestinationInput(destinationToAdd);
             if (!isValidInput) return;
@@ -418,9 +419,10 @@ function Commutes(configuration) {
             destinationFormReset();
             hideModal();
         });
-
+        //TODO: ver despues
         destinationModalEl.editButton.addEventListener('click', () => {
             const destination = { ...destinations[activeDestinationIndex] };
+            console.log(destination);
             const selectedTravelMode = destinationModalEl.getTravelModeInput().value;
             const isSameDestination =
                 destination.name === destinationModalEl.destinationInput.value;
@@ -431,7 +433,7 @@ function Commutes(configuration) {
             }
             if (!isSameDestination) {
                 const isValidInput = validateDestinationInput(destinationToAdd);
-                if (!isValidInput) return;
+                if (!isValidInput) return;                
                 destination.name = destinationToAdd.name;
                 destination.place_id = destinationToAdd.place_id;
                 destination.url = generateMapsUrl(destinationToAdd, selectedTravelMode);
@@ -625,19 +627,19 @@ function Commutes(configuration) {
             case DestinationOperation.DELETE:
             default:
         }
-
-        editButtonEl.addEventListener('click', () => {
-            destinationModalEl.title.innerHTML = 'Edit destination';
-            destinationModalEl.destinationInput.value = destination.name;
-            showElement(destinationModalEl.deleteButton);
-            showElement(destinationModalEl.editButton);
-            hideElement(destinationModalEl.addButton);
-            showModal();
-            const travelModeId = destination.travelModeEnum.toLowerCase() + '-mode';
-            document.forms['destination-form'][travelModeId].checked = true;
-            // Update the autocomplete widget as if it was user input.
-            destinationModalEl.destinationInput.dispatchEvent(new Event('input'));
-        });
+        //TODO: Se comento el modal editar 
+        //editButtonEl.addEventListener('click', () => {
+        //    destinationModalEl.title.innerHTML = 'Edit destination';
+        //    destinationModalEl.destinationInput.value = destination.name;
+        //    showElement(destinationModalEl.deleteButton);
+        //    showElement(destinationModalEl.editButton);
+        //    hideElement(destinationModalEl.addButton);
+        //    showModal();
+        //    const travelModeId = destination.travelModeEnum.toLowerCase() + '-mode';
+        //    document.forms['destination-form'][travelModeId].checked = true;
+        //    // Update the autocomplete widget as if it was user input.
+        //    destinationModalEl.destinationInput.dispatchEvent(new Event('input'));
+        //});
     }
 
     /**
@@ -679,6 +681,7 @@ function Commutes(configuration) {
     /**
      * Adds new destination to the list and get directions and commutes info.
      */
+    //TODO: agregando una nueva ruta a la DB con la funcion saveTransporte
     function addDestinationToList(destinationToAdd, travelModeEnum) {
         const destinationConfig =
             createDestinationConfig(destinationToAdd, travelModeEnum);
@@ -689,6 +692,11 @@ function Commutes(configuration) {
                 destinations.push(destinationConfig);
                 getCommutesInfo(response, destinationConfig);
                 assignMapObjectListeners(destinationConfig, newDestinationIndex);
+                let lat = destinationConfig.lat;
+                let lng = destinationConfig.lng;
+                let descripcion = destinationConfig.name;
+                console.log(`LatLng = ${destinationConfig.lat};${destinationConfig.lng}; Linea de Transporte = ${destinationConfig.name}`);
+                saveTransporte(lat, lng, descripcion);
                 updateCommutesPanel(
                     destinationConfig, newDestinationIndex, DestinationOperation.ADD);
                 handleRouteClick(destinationConfig, newDestinationIndex);
@@ -713,6 +721,7 @@ function Commutes(configuration) {
      * is optional; a new label will be generated if not provided.
      */
     function createDestinationConfig(destinationToAdd, travelModeEnum, label) {
+        console.log(destinationToAdd);
         return {
             name: destinationToAdd.name,
             place_id: destinationToAdd.place_id,
@@ -825,7 +834,40 @@ function Commutes(configuration) {
         googleMapsUrl += '&destination=' + encodeURIComponent(destination.name) +
             '&destination_place_id=' + destination.place_id;
         googleMapsUrl += '&travelmode=' + travelModeEnum.toLowerCase();
+        let lat = origin.lat;
+        let lng = origin.lng;
+        let descripcion = destination.name;
+        console.log(`LatLng = ${lat};${lng}; Linea de Transporte = ${descripcion}`);
+        saveTransporte(lat, lng, descripcion);
         return googleMapsUrl;
+    }
+    //TODO: funcion para guardar un nuevo transportista en la DB
+    function saveTransporte(lat, lng, descripcion) {
+        var data = {
+            latitud: lat,
+            longitud: lng,
+            descripcion: descripcion,
+            nombre: descripcion
+        }
+        console.log(data);
+        $.ajax({
+            type: 'POST',
+            url: 'CreateTransporte',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function (data) {
+                //if (data.estado) {
+                //    console.log("exito guardado");
+                //    location.href = "Index";
+                //}
+                //else {
+                //    console.log('Error');
+                //}                
+            },
+            error: function (error) {
+                console.log(error.responseText);
+            }
+        });
     }
 
     /**
@@ -1057,8 +1099,9 @@ function handlePanelScroll() {
  * Generates new destination template based on destination info properties.
  */
 function generateDestinationTemplate(destination) {
-    const travelModeIconTemplate = '<use href="#commutes-' +
-        destination.travelModeEnum.toLowerCase() + '-icon"/>';
+    //const travelModeIconTemplate = '<use href="#commutes-' +
+    //    destination.travelModeEnum.toLowerCase() + '-icon"/>';
+    const travelModeIconTemplate = '<use href="#commutes-transit-icon"/>'; //se cambio linea 1062 y linea 1074
     return `
     <div class="destination" tabindex="0" role="button">
       <div class="destination-content">
@@ -1070,9 +1113,9 @@ function generateDestinationTemplate(destination) {
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <use href="#commutes-arrow-icon"/>
           </svg>
-          <span class="location-marker">${destination.label}</span>
+          <span class="location-marker">${destination.name}</span>
         </div>
-        <div class="address">To
+        <div class="address">Ruta
           <abbr title="${destination.name}">${destination.name}</abbr>
         </div>
         <div class="destination-eta">${destination.duration}</div>
@@ -1085,12 +1128,12 @@ function generateDestinationTemplate(destination) {
         <svg aria-label="Directions icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
           <use href="#commutes-directions-icon"/>
         </svg>
-      </a>
-      <button class="edit-button" aria-label="Edit Destination">
+      </a>    
+      <a class="edit-button" href="AddRutas" aria-label="Agregar Rutas del la Linea">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <use href="#commutes-edit-icon"/>
+          <use href="#commutes-add-icon"/>
         </svg>
-        Edit
-      </button>
+        Agregar Rutas
+      </a>      
     </div>`;
 }

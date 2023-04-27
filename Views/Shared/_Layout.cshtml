@@ -92,20 +92,6 @@
             <ul class="nav navbar-nav">
                 @switch (obj.idTipoUsuario)
                 {
-                    case 1:
-                        <li class="nav-item">
-                            @Html.ActionLink("GUIA DE RUTAS", "Expediente", "Documento", null, new { @class = "navbar-nav-link" })
-                        </li>
-                        <li class="nav-item">
-                            @Html.ActionLink("NOTIFICACIONES", "", "", null, new { @class = "navbar-nav-link" })
-                        </li>
-                        <li class="nav-item">
-                            @Html.ActionLink("CALCULO DE RUTAS", "", "", null, new { @class = "navbar-nav-link" })
-                        </li>
-                        <li class="nav-item">
-                            @Html.ActionLink("COMPARTIR INCIDENCIAS", "", "", null, new { @class = "navbar-nav-link" })
-                        </li>
-                        break;
                     case 2:
                         <li class="nav-item">
                             @Html.ActionLink("GUIA DE RUTAS", "Expediente", "Documento", null, new { @class = "navbar-nav-link" })
@@ -123,6 +109,9 @@
                     case 3:
                         <li class="nav-item">
                             <a href="~/Usuario/Listar" class="navbar-nav-link"><i class="icon-user-plus mr-2"></i>USUARIOS</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="~/Map/Index" class="navbar-nav-link"><i class="icon-user-plus mr-2"></i>AGREGAR RUTAS</a>
                         </li>
                         break;
                 }

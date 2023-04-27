@@ -10,17 +10,21 @@ namespace Project.DTO
     public partial class Ubicacion
     {
         public int Id { get; set; }
+        [Display(Name = "Linea")]
 
-        public int? IdRutas { get; set; }
+        public int? IdTransporte { get; set; }
+
+        [Column("Ubicacion")]
+        public string Ubicacion1 { get; set; }
 
         public string Descripcion { get; set; }
-
-        public string Titulo { get; set; }
 
         [StringLength(500)]
         public string Latitud { get; set; }
 
         [StringLength(500)]
         public string Longitud { get; set; }
+
+        public virtual Transporte Transporte { get; set; }
     }
 }
