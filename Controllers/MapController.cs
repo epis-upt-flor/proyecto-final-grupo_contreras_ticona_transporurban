@@ -29,7 +29,11 @@ namespace Project.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,IdTransporte,Ubicacion1,Descripcion,Latitud,Longitud")] Ubicacion ubicacion)
         {
+            //var IdTrasporte = 1;
+            ubicacion.IdTransporte = 1;
+
             if (ubicacion.Ubicacion1 != string.Empty)
+
             {
                 db.Ubicacion.Add(ubicacion);
                 db.SaveChanges();
