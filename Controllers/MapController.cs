@@ -1,11 +1,10 @@
 ﻿using Project.DTO;
 using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
+
 
 namespace Project.Controllers
 {
@@ -21,19 +20,25 @@ namespace Project.Controllers
         [HttpGet]
         public ActionResult AddRutas(int? id)
         {
-            ViewBag.Transportes = db.Transporte.ToList();
             var ubicacion = db.Ubicacion.Include(u => u.Transporte);
-            return View(ubicacion.ToList());
+            if (ubicacion == null)
+            {
+                ViewBag.Transportes = db.Transporte.ToList();
+                return View(ubicacion.ToList());
+            }
+            else
+            {
+                ViewBag.Transportes = db.Transporte.ToList();
+                ViewBag.Transporte = db.Transporte.Find(1);
+                return View(ubicacion.ToList());
+            }
+
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,IdTransporte,Ubicacion1,Descripcion,Latitud,Longitud")] Ubicacion ubicacion)
         {
-            //var IdTrasporte = 1;
-            ubicacion.IdTransporte = 1;
-
             if (ubicacion.Ubicacion1 != string.Empty)
-
             {
                 db.Ubicacion.Add(ubicacion);
                 db.SaveChanges();
@@ -75,6 +80,7 @@ namespace Project.Controllers
         //Solo pruebas
         public ActionResult About()
         {
+            ViewBag.Transportes = db.Transporte.Find(1);
             return View();
         }
         [HttpPost]
@@ -114,6 +120,19 @@ namespace Project.Controllers
             }
 
             return new JsonResult { Data = new { estado = estado } };
+        }
+        [HttpGet]
+        public ActionResult Rutas()
+        {
+            ViewBag.Transportes = db.Transporte.Find(1);
+            return View();
+        }
+        public ActionResult ListaRutas()
+        {
+            db.Configuration.ProxyCreationEnabled = false;
+            var rutas = db.Ubicacion.ToList();
+            return Json(rutas, JsonRequestBehavior.AllowGet);
+            //return new JsonResult { Data = rutas, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
 
     }

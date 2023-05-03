@@ -1,133 +1,4 @@
-﻿//let map;
-
-//function initMap() {
-//    // The location of Uluru
-//    const uluru = { lat: -18.0227921, lng: -70.2825664 };
-//    map = new google.maps.Map(document.getElementById("map"), {
-//        center: uluru,
-//        zoom: 8,
-//    });
-//    // The marker, positioned at Uluru
-//    const marker = new google.maps.Marker({
-//        position: uluru,
-//        map: map,
-//    });
-//}
-
-//window.initMap = initMap;
-
-// Initialize and add the map
-//function initMap() {
-//    // The location of Uluru
-//    const uluru = { lat: -25.344, lng: 131.031 };
-//    // The map, centered at Uluru
-//    const map = new google.maps.Map(document.getElementById("map"), {
-//        zoom: 4,
-//        center: uluru,
-//    });
-//    // The marker, positioned at Uluru
-//    const marker = new google.maps.Marker({
-//        position: uluru,
-//        map: map,
-//    });
-//}
-
-/*window.initMap = initMap;*/
-
-/**
- * @license
- * Copyright 2019 Google LLC. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0
- */
-//let map;
-//let marker;
-//let geocoder;
-//let responseDiv;
-//let response;
-
-//function initMap() {
-//    map = new google.maps.Map(document.getElementById("map"), {
-//        zoom: 8,
-//        center: { lat: -34.397, lng: 150.644 },
-//        mapTypeControl: false,
-//    });
-//    geocoder = new google.maps.Geocoder();
-
-//    const inputText = document.createElement("input");
-
-//    inputText.type = "text";
-//    inputText.placeholder = "Enter a location";
-
-//    const submitButton = document.createElement("input");
-
-//    submitButton.type = "button";
-//    submitButton.value = "Geocode";
-//    submitButton.classList.add("button", "button-primary");
-
-//    const clearButton = document.createElement("input");
-
-//    clearButton.type = "button";
-//    clearButton.value = "Clear";
-//    clearButton.classList.add("button", "button-secondary");
-//    response = document.createElement("pre");
-//    response.id = "response";
-//    response.innerText = "";
-//    responseDiv = document.createElement("div");
-//    responseDiv.id = "response-container";
-//    responseDiv.appendChild(response);
-
-//    const instructionsElement = document.createElement("p");
-
-//    instructionsElement.id = "instructions";
-//    instructionsElement.innerHTML =
-//        "<strong>Instructions</strong>: Enter an address in the textbox to geocode or click on the map to reverse geocode.";
-//    map.controls[google.maps.ControlPosition.TOP_LEFT].push(inputText);
-//    map.controls[google.maps.ControlPosition.TOP_LEFT].push(submitButton);
-//    map.controls[google.maps.ControlPosition.TOP_LEFT].push(clearButton);
-//    map.controls[google.maps.ControlPosition.LEFT_TOP].push(
-//        instructionsElement
-//    );
-//    map.controls[google.maps.ControlPosition.LEFT_TOP].push(responseDiv);
-//    marker = new google.maps.Marker({
-//        map,
-//    });
-//    map.addListener("click", (e) => {
-//        geocode({ location: e.latLng });
-//    });
-//    submitButton.addEventListener("click", () =>
-//        geocode({ address: inputText.value })
-//    );
-//    clearButton.addEventListener("click", () => {
-//        clear();
-//    });
-//    clear();
-//}
-
-//function clear() {
-//    marker.setMap(null);
-//}
-
-//function geocode(request) {
-//    clear();
-//    geocoder
-//        .geocode(request)
-//        .then((result) => {
-//            const { results } = result;
-
-//            map.setCenter(results[0].geometry.location);
-//            marker.setPosition(results[0].geometry.location);
-//            marker.setMap(map);
-//            response.innerText = JSON.stringify(result, null, 2);
-//            return results;
-//        })
-//        .catch((e) => {
-//            alert("Geocode was not successful for the following reason: " + e);
-//        });
-//}
-
-//window.initMap = initMap;
-
-
+﻿
 'use strict';
 
 /**
@@ -356,7 +227,7 @@ function Commutes(configuration) {
                 showModal();
                 const travelModeEnum = configuration.defaultTravelModeEnum || TravelMode.DRIVING;
                 const travelModeId = travelModeEnum.toLowerCase() + '-mode';
-                document.forms['destination-form'][travelModeId].checked = true;                
+                document.forms['destination-form'][travelModeId].checked = true;
             });
         });
 
@@ -397,7 +268,7 @@ function Commutes(configuration) {
             fields: ['place_id', 'geometry', 'name'],
         };
         const autocomplete = new google.maps.places.Autocomplete(
-            destinationModalEl.destinationInput, autocompleteOptions);        
+            destinationModalEl.destinationInput, autocompleteOptions);
         let destinationToAdd;
         autocomplete.addListener('place_changed', () => {
             const place = autocomplete.getPlace();
@@ -409,8 +280,8 @@ function Commutes(configuration) {
             }
             destinationModalEl.destinationInput.classList.remove('error');
             destinationModalEl.errorMessage.innerHTML = '';
-        });   
-        
+        });
+
         destinationModalEl.addButton.addEventListener('click', () => {
             const isValidInput = validateDestinationInput(destinationToAdd);
             if (!isValidInput) return;
@@ -433,7 +304,7 @@ function Commutes(configuration) {
             }
             if (!isSameDestination) {
                 const isValidInput = validateDestinationInput(destinationToAdd);
-                if (!isValidInput) return;                
+                if (!isValidInput) return;
                 destination.name = destinationToAdd.name;
                 destination.place_id = destinationToAdd.place_id;
                 destination.url = generateMapsUrl(destinationToAdd, selectedTravelMode);
@@ -692,8 +563,10 @@ function Commutes(configuration) {
                 destinations.push(destinationConfig);
                 getCommutesInfo(response, destinationConfig);
                 assignMapObjectListeners(destinationConfig, newDestinationIndex);
-                let lat = destinationConfig.lat;
-                let lng = destinationConfig.lng;
+                //let lat = destinationConfig.lat;
+                //let lng = destinationConfig.lng;
+                let lat = destinationToAdd.lat;
+                let lng = destinationToAdd.lng;
                 let descripcion = destinationConfig.name;
                 console.log(`LatLng = ${destinationConfig.lat};${destinationConfig.lng}; Linea de Transporte = ${destinationConfig.name}`);
                 saveTransporte(lat, lng, descripcion);
@@ -836,9 +709,9 @@ function Commutes(configuration) {
         googleMapsUrl += '&travelmode=' + travelModeEnum.toLowerCase();
         let lat = origin.lat;
         let lng = origin.lng;
-        let descripcion = destination.name;
-        console.log(`LatLng = ${lat};${lng}; Linea de Transporte = ${descripcion}`);
-        saveTransporte(lat, lng, descripcion);
+        //let descripcion = destination.name;
+        //console.log(`LatLng = ${lat};${lng}; Linea de Transporte = ${descripcion}`);
+        //saveTransporte(lat, lng, descripcion);
         return googleMapsUrl;
     }
     //TODO: funcion para guardar un nuevo transportista en la DB

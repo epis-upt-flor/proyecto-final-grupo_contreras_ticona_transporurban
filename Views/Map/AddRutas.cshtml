@@ -2,10 +2,10 @@
 @{
     Layout = null;
     List<Project.DTO.Transporte> transportes = ViewBag.Transportes;
+    Project.DTO.Transporte transporte = ViewBag.Transporte;
     double latitudLinea = 0;
     double longitudLinea = 0;
 }
-
 <!DOCTYPE html>
 
 <html>
@@ -33,7 +33,7 @@
                     <div class="form-group">
                         <label for="Ubicacion">Ubicación</label>
                         <input type="text" id="Id" name="Id" hidden />
-                        <input type="text" id="IdTransporte" name="IdTransporte" hidden />
+                        <input type="text" id="IdTransporte" name="IdTransporte" value="@transporte.Id" hidden />
                         <input type="text" id="Ubicacion1" name="Ubicacion1" class="form-control" />
                     </div>
                     <div class="form-group">
@@ -77,16 +77,24 @@
 
                     @foreach (var item in Model)
                     {
-                        <tr>
-                            @foreach (var transporteId in transportes)
+                        foreach (var transporteId in transportes)
+                        {
+                            if (transporteId.Id == item.IdTransporte)
                             {
-                                if (transporteId.Id == item.IdTransporte)
+                                if (item.IdTransporte == 0)
                                 {
+                                    latitudLinea = Convert.ToDouble(transporte.Latitud);
+                                    longitudLinea = Convert.ToDouble(transporte.Longitud);
+                                }
+                                else
+                                {
+                                    latitudLinea = Convert.ToDouble(transporteId.Latitud);
+                                    longitudLinea = Convert.ToDouble(transporteId.Longitud);
+                                }
+                                <tr>
                                     <th>
                                         @Html.DisplayFor(x => transporteId.Nombre)
                                     </th>
-                                    latitudLinea = Convert.ToDouble(transporteId.Latitud);
-                                    longitudLinea = Convert.ToDouble(transporteId.Longitud);
                                     <td>
                                         @Html.DisplayFor(modelItem => item.Ubicacion1)
                                     </td>
@@ -99,9 +107,9 @@
                                     <td>
                                         @Html.ActionLink("Edit", "Edit", new { id = item.Id })
                                     </td>
-                                }
+                                </tr>
                             }
-                        </tr>
+                        }
                     }
                 </table>
             </div>
@@ -110,6 +118,8 @@
     <script>
         var lat = '@latitudLinea';
         var long = '@longitudLinea';
+        //var lat = -18.0759509;
+        //var long = -70.24771559999999;
         $('#ModalMapPreview').locationpicker({
             radius: 0,
             location: {

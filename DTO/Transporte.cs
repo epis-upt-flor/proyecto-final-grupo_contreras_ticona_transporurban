@@ -1,10 +1,9 @@
 namespace Project.DTO
 {
-    using System;
+    using Newtonsoft.Json;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
 
     [Table("Transporte")]
     public partial class Transporte
@@ -26,8 +25,8 @@ namespace Project.DTO
 
         [StringLength(500)]
         public string Longitud { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [JsonIgnore]
         public virtual ICollection<Ubicacion> Ubicacion { get; set; }
     }
 }
