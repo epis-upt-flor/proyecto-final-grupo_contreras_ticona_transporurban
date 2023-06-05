@@ -1,11 +1,9 @@
-﻿namespace Project.DTO
+namespace Project.Data
 {
     using Newtonsoft.Json;
-    using Project.Data;
     using System;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Runtime.Serialization;
 
     [Table("Notificacion")]
     public partial class Notificacion

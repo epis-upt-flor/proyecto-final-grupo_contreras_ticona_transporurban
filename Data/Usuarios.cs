@@ -1,4 +1,4 @@
-﻿namespace Project.DTO
+namespace Project.Data
 {
     using Newtonsoft.Json;
     using System;

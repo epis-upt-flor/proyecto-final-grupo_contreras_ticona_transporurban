@@ -1,18 +1,19 @@
-using Project.Data;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
 
-namespace Project.DTO
+namespace Project.Data
 {
     public partial class ModelMap : DbContext
     {
         public ModelMap()
-              : base("name=ModelMap")
+            : base("name=ModelMap")
         {
         }
+
         public virtual DbSet<Notificacion> Notificacion { get; set; }
+        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<Transporte> Transporte { get; set; }
         public virtual DbSet<Ubicacion> Ubicacion { get; set; }
         public virtual DbSet<Usuarios> Usuarios { get; set; }
