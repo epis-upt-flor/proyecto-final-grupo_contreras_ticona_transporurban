@@ -8,18 +8,17 @@
 }
 
 <!DOCTYPE html>
-
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Rutas Google Maps</title>
-    <!-- Bootstrap y Jquery -->
+    <!-- Bootstrap y jQuery -->
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css" />
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
     <!-- Fin -->
-    <!-- Complementos de JQuery -->
+    <!-- Complementos de jQuery -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB60bIrSUlI-80w4hhJ4tdLNj5LJMIpxKs&callback=initMap&libraries=places,geometry&solution_channel=GMP_QB_commutes_v2_c" async defer></script>
     <script src="~/Script/locationpicker.jquery.js"></script>
 </head>
@@ -63,45 +62,46 @@
         function initMap() {
             var latTransporte = @transporte.Latitud;
             var lngTransporte = @transporte.Longitud;
-            //-18.0049908,-70.2295611
+
             const map = new google.maps.Map(document.getElementById("ModalMapPreview"), {
                 zoom: 18,
                 center: new google.maps.LatLng(-18.004801, -70.2253246),
                 mapTypeId: "terrain",
             });
+
             const routes = [];
 
             if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function (position) {
-                        var latitud = position.coords.latitude;
-                        var longitud = position.coords.longitude;
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var latitud = position.coords.latitude;
+                    var longitud = position.coords.longitude;
 
-                        var geocoder = new google.maps.Geocoder();
-                        var latlng = new google.maps.LatLng(latitud, longitud);
+                    var geocoder = new google.maps.Geocoder();
+                    var latlng = new google.maps.LatLng(latitud, longitud);
 
-                        geocoder.geocode({ 'location': latlng }, function (results, status) {
-                            if (status === 'OK') {
-                                if (results[0]) {
-                                    var direccion = results[0].formatted_address;
-                                    document.getElementById('Inicio').value = direccion;
-                                    document.getElementById('InicioLat').value = latitud;
-                                    document.getElementById('InicioLng').value = longitud;
-                                    console.log("Dirección actual: " + direccion);
-                                    console.log("Latitud actual: " + latitud);
-                                    console.log("Longitud actual: " + longitud);
+                    geocoder.geocode({ 'location': latlng }, function (results, status) {
+                        if (status === 'OK') {
+                            if (results[0]) {
+                                var direccion = results[0].formatted_address;
+                                document.getElementById('Inicio').value = direccion;
+                                document.getElementById('InicioLat').value = latitud;
+                                document.getElementById('InicioLng').value = longitud;
+                                console.log("Dirección actual: " + direccion);
+                                console.log("Latitud actual: " + latitud);
+                                console.log("Longitud actual: " + longitud);
 
-                                    // Aquí puedes utilizar la dirección actual
-                                } else {
-                                    console.log('No se encontraron resultados de geocodificación');
-                                }
+                                // Aquí puedes utilizar la dirección actual
                             } else {
-                                console.log('Error en la geocodificación debido a: ' + status);
+                                console.log('No se encontraron resultados de geocodificación');
                             }
-                        });
+                        } else {
+                            console.log('Error en la geocodificación debido a: ' + status);
+                        }
                     });
-                } else {
-                    console.log('Geolocalización no soportada por el navegador');
-                }
+                });
+            } else {
+                console.log('Geolocalización no soportada por el navegador');
+            }
 
             $(document).ready(function () {
                 $.ajax({
@@ -110,7 +110,7 @@
                     dataType: "json",
                     success: function (datos) {
                         console.log(datos);
-                        // recorrer los datos JSON y construir las lineas en el mapa
+                        // recorrer los datos JSON y construir las líneas en el mapa
                         $.each(datos, function (index, fila) {
                             console.log(fila.Id, fila.Ubicacion1, fila.Latitud, fila.Longitud);
                             var idmapa = fila.Id;
@@ -120,6 +120,7 @@
 
                             routes.push({ lat: puntoLat, lng: puntoLng });
                         });
+
                         const polylines = new google.maps.Polyline({
                             path: routes,
                             geodesic: true,
@@ -128,9 +129,6 @@
                             strokeWeight: 2,
                         });
                         polylines.setMap(map);
-                        //var encodePath = google.maps.geometry.encoding.encodePath(routes);
-                        ////encodePath(routes);
-                        //console.log(encodePath);
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         console.log(textStatus, errorThrown);
@@ -146,18 +144,10 @@
             autocomplete.addListener('place_changed', function () {
                 var place = autocomplete.getPlace();
                 if (place.geometry) {
-                    //map.panTo(place.geometry.location);
-                    //map.setZoom(15);
                     var lat = place.geometry.location.lat();
                     var lng = place.geometry.location.lng();
                     document.getElementById('Latitud').value = lat;
                     document.getElementById('Longitud').value = lng;
-                    //console.log(place);
-                    //console.log(place.name);
-                    //console.log(place.vicinity);
-                    //console.log("Latitud: " + lat);
-                    //console.log("Longitud: " + lng);
-                    // Aquí puedes realizar otras acciones con el lugar seleccionado
                 } else {
                     alert('No se encontraron detalles del lugar');
                 }
@@ -170,31 +160,29 @@
                 // Recupera los datos del formulario
                 var formData = new FormData(this);
                 console.log(formData);
+
                 // Realiza una solicitud AJAX para enviar los datos al controlador
-                var xhr = new XMLHttpRequest();
-                xhr.open("POST", this.action, true);
-                xhr.onload = function () {
-                    // Manejar la respuesta del controlador aquí
-                    if (xhr.status === 200) {
-                        // Procesar la respuesta exitosa
-                        console.log("Se envio destino")
-                        console.log(xhr.response);
-                        var rutasLatLng = JSON.parse(xhr.response);
-                        console.log(rutasLatLng.data);
-                        console.log(rutasLatLng.mensaje);
-                        console.log(rutasLatLng.estado);
-                        if (rutasLatLng.estado) {
-                            alert(rutasLatLng.mensaje);
-                            // recorrer los datos JSON y construir las lines en el mapa
-                            $.each(rutasLatLng.data, function (index, fila) {
+                $.ajax({
+                    url: this.action,
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        console.log("Se envió el destino");
+                        console.log(response.data);
+                        if (response.estado) {
+                            alert(response.mensaje);
+                            // recorrer los datos JSON y construir las líneas en el mapa
+                            $.each(response.data, function (index, fila) {
                                 console.log(fila.Id, fila.Ubicacion, fila.Latitude, fila.Longitude);
                                 var ubicacion = fila.Ubicacion;
                                 var puntoLat = parseFloat(fila.Latitude);
                                 var puntoLng = parseFloat(fila.Longitude);
 
-                                dataRoutes.push({ lat: puntoLat, lng: puntoLng });
+                                dataRoutes.push({ lat: puntoLat, lng: puntoLng, title: fila.Ubicacion });
                             });
-                            console.log("nuevo array routes: " + dataRoutes);
+
                             const polylines = new google.maps.Polyline({
                                 path: dataRoutes,
                                 geodesic: true,
@@ -204,91 +192,14 @@
                             });
                             polylines.setMap(map);
                         }
-                    } else {
-                        // Procesar errores
-                        alert("Error " + xhr.status + " Mensaje: " + formData);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log("Error " + jqXHR.status + " Mensaje: " + textStatus);
+                        alert("Error " + jqXHR.status + " Mensaje: " + textStatus);
                     }
-                };
-                xhr.send(formData);
+                });
             });
         }
-
-        //$(document).ready(function () {
-        //    $('#Destino').on('input', function () {
-        //        var texto = $(this).val();
-        //        $('#ModalMapPreview').locationpicker({
-        //            radius: 0,
-        //            location: {
-        //                latitude: -18.072564691237044,
-        //                longitude: -70.2512668447357
-        //            },
-        //            enableAutocomplete: true,
-        //            inputBinding: {
-        //                latitudeInput: $('#Latitud'),
-        //                longitudeInput: $('#Longitud'),
-        //                locationNameInput: $('#Destino')
-        //            },
-        //            onchanged: function (currentLocation, radius, isMarkerDropped) {
-        //                $('#ubicacion').html($('#ModalMapaddress').val());
-        //            }
-        //        });
-        //        $('#ModalMap').on('shown.bs.modal', function () {
-        //            $('#ModalMapPreview').locationpicker('autosize');
-        //        });
-        //    });
-        //});
-
-        //$(document).ready(function () {
-        //    var $destino = $('#Destino');
-        //    var $latitud = $('#Latitud');
-        //    var $longitud = $('#Longitud');
-        //    var $modalMapPreview = $('#ModalMapPreview');
-
-        //    $destino.on('input', function () {
-        //        $modalMapPreview.locationpicker({
-        //            radius: 0,
-        //            location: {
-        //                latitude: -18.072564691237044,
-        //                longitude: -70.2512668447357
-        //            },
-        //            enableAutocomplete: true,
-        //            inputBinding: {
-        //                latitudeInput: $latitud,
-        //                longitudeInput: $longitud,
-        //                locationNameInput: $destino
-        //            },
-        //            onchanged: function (currentLocation, radius, isMarkerDropped) {
-        //                $('#ubicacion').html($('#ModalMapaddress').val());
-        //            }
-        //        });
-        //    });
-
-        //    $('#ModalMap').on('shown.bs.modal', function () {
-        //        $modalMapPreview.locationpicker('autosize');
-        //    });
-        //});
-
-        //function obtenerLatLong() {
-        //    var direccion = document.getElementById("direccion").value;
-        //    var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + encodeURIComponent(direccion) + "&key=TU_API_KEY";
-
-        //    fetch(url)
-        //        .then(response => response.json())
-        //        .then(data => {
-        //            var resultados = data.results;
-        //            if (resultados.length > 0) {
-        //                var latitud = resultados[0].geometry.location.lat;
-        //                var longitud = resultados[0].geometry.location.lng;
-        //                console.log("Latitud: " + latitud);
-        //                console.log("Longitud: " + longitud);
-        //            } else {
-        //                console.log("No se encontraron resultados para la dirección proporcionada.");
-        //            }
-        //        })
-        //        .catch(error => {
-        //            console.error("Error al obtener la latitud y longitud:", error);
-        //        });
-        //}
     </script>
 </body>
 </html>

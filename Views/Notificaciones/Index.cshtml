@@ -1,8 +1,8 @@
-﻿@{
+﻿@using Project.Models
+@{
     ViewBag.Title = "Index";
-    Project.DTO.Usuarios usuario = ViewBag.Usuario;
-    double latitudLinea = 0;
-    double longitudLinea = 0;
+    //Project.DTO.Usuarios usuario = ViewBag.Usuario;
+    Usuario obj = (Usuario)Session["UsuarioFull"];
 }
 <!DOCTYPE html>
 
@@ -10,75 +10,604 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Google Map Location Picker</title>
-    <!-- Bootstrap y Jquery -->
-    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css" />
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-    <!-- Fin -->
-    <!-- Complementos de JQuery -->
-    <script src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=places&key=AIzaSyB60bIrSUlI-80w4hhJ4tdLNj5LJMIpxKs"></script>
-    <script src="~/Script/locationpicker.jquery.js"></script>
+    @*Bootstrap y Jquery*@
+    <script src="~/styles/global_assets/js/main/jquery-3.4.1.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB60bIrSUlI-80w4hhJ4tdLNj5LJMIpxKs&callback=initMap&libraries=places,geometry&solution_channel=GMP_QB_commutes_v2_c" async defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    @*Fin Complementos de JQuery*@
+    @*<script src="~/Script/locationpicker.jquery.js"></script>*@
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <style>
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            position: relative;
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border: 1px solid #888;
+            width: 80%;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+            -webkit-animation-name: animatetop;
+            -webkit-animation-duration: 0.4s;
+            animation-name: animatetop;
+            animation-duration: 0.4s
+        }
+
+        /* Add Animation */
+        @@-webkit-keyframes animatetop {
+            from {
+                top: -300px;
+                opacity: 0
+            }
+
+            to {
+                top: 0;
+                opacity: 1
+            }
+        }
+
+        @@keyframes animatetop {
+            from {
+                top: -300px;
+                opacity: 0
+            }
+
+            to {
+                top: 0;
+                opacity: 1
+            }
+        }
+
+        /* The Close Button */
+        .close {
+            color: white;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+        .modal-header {
+            padding: 2px 16px;
+            background-color: #5cb85c;
+            color: white;
+        }
+
+        .modal-body {
+            padding: 2px 16px;
+        }
+
+        .modal-footer {
+            padding: 2px 16px;
+            background-color: #5cb85c;
+            color: white;
+        }
+    </style>
+
+    <script>
+        var _hmt = _hmt || [];
+        (function () {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?73c27e26f610eb3c9f3feb0c75b03925";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
 </head>
 <body>
+    @*<div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header page-header-light">
+                    <div class="page-header-content header-elements-md-inline">
+                        <div class="header-elements d-none">
+                            <div class="d-flex justify-content-center">
+                                <button type="button" class="btn btn-link btn-float text-default" id="btnNuevoNotificacion">
+                                    <i class="icon-floppy-disk text-slate-700"></i><span>NUEVA NOTIFICACIÓN</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <table id="tableNotification" class="table table-bordered table-sm table-striped" style="width:100%"></table>
+                    </div>
+                </div>
+                <div id="ModalNotificacion" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span class="close">&times;</span>
+                        </div>
+                        <div class="modal-body">
+
+                            @using (Html.BeginForm("Create", "Notificaciones", FormMethod.Post, new { id = "formNotificacion" }))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <div class="form-group">
+                                    <label for="Direccion">Direccion</label>
+                                    <input type="text" id="Id" name="Id" hidden />
+                                    <input type="text" id="IdUsuario" name="IdUsuario" value="@Session["id"]" hidden />
+                                    <input type="text" id="Direccion" name="Direccion" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="Direccion">Descripcion de Incidencia</label>
+                                    <input type="text" id="Descripcion" name="Descripcion" class="form-control" />
+                                </div>
+                                <!-- Latitud y Longitud -->
+                                <div class="form-group">
+                                    <label for="Lat">lat.:</label>
+                                    <input id="Latitud" name="Latitud" class="form-control" value="-17.99426" />
+                                    <label for="Long">long.:</label>
+                                    <input id="Longitud" name="Longitud" class="form-control" value="-70.251855" />
+                                </div>
+                            }
+                            <div class="modal-footer">
+                                <button id="btnGuardar" class="btn btn-primary">Guardar</button>
+                                <button id="btnCancelar" class="btn btn-danger">Cancelar</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
-                @using (Html.BeginForm("Create", "Notificaciones"))
+            <div class="col-md-12">
+                @if (obj.idTipoUsuario != 3)
                 {
-                    @Html.AntiForgeryToken()
-
-                    <div class="form-group">
-                        <label for="Direccion">Direccion</label>
-                        <input type="text" id="Id" name="Id" hidden />
-                        <input type="text" id="IdUsuario" name="IdUsuario" value="@usuario.Id" hidden />
-                        <input type="text" id="Direccion" name="Direccion" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="Direccion">Descripcion de Incidencia</label>
-                        <input type="text" id="Descripcion" name="Descripcion" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <div id="ModalMapPreview" style="width:100%; height:300px;" hidden></div>
-                    </div>
-                    <!-- Latitud y Longitud -->
-                    <div class="form-group">
-                        <label for="Lat">lat.:</label>
-                        <input id="Latitud" name="Latitud" class="form-control" value="-17.99426" />
-                        <label for="Long">long.:</label>
-                        <input id="Longitud" name="Longitud" class="form-control" value="-70.251855" />
-                    </div>
-                    <!-- Botones -->
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-success">Agregar</button>
-                        <a href="~/Clientes/Index" class="btn btn-primary">Regresar</a>
+                    <div class="page-header page-header-light">
+                        <div class="page-header-content header-elements-md-inline">
+                            <div class="header-elements d-none">
+                                <div class="d-flex justify-content-center">
+                                    <button type="button" class="btn btn-link btn-float text-default" id="btnNuevoNotificacion">
+                                        <i class="icon-floppy-disk text-slate-700"></i><span>NUEVA NOTIFICACIÓN</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 }
+                <div class="card">
+                    <div class="card-body">
+                        <table id="tableNotification" class="table table-bordered table-sm table-striped" style="width:100%"></table>
+                    </div>
+                </div>
+                <div id="ModalNotificacion" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span class="close">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <form id="formNotificacion" action="Create" method="post">
+                                @Html.AntiForgeryToken()
+                                <div class="form-group">
+                                    <label for="Direccion">Dirección</label>
+                                    <input type="text" id="Id" name="Id" hidden />
+                                    <input type="text" id="IdUsuario" name="IdUsuario" hidden />
+                                    <input type="text" id="Direccion" name="Direccion" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="Direccion">Descripción de Incidencia</label>
+                                    <input type="text" id="Descripcion" name="Descripcion" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="Lat">lat.:</label>
+                                    <input id="Latitud" name="Latitud" class="form-control" value="-17.99426" />
+                                    <label for="Long">long.:</label>
+                                    <input id="Longitud" name="Longitud" class="form-control" value="-70.251855" />
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+
+                            <button id="btnGuardar" class="btn btn-primary">Guardar</button>
+
+                            <button id="btnEditar" class="btn btn-primary">Editar</button>
+
+                            <button id="btnCancelar" class="btn btn-danger">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
     <script>
-        var lat = '@latitudLinea';
-        var long = '@longitudLinea';
-        $('#ModalMapPreview').locationpicker({
-            //radius: 0,
-            //location: {
-            //    latitude: lat,
-            //    longitude: long
-            //},
-            enableAutocomplete: true,
-            inputBinding: {
-                latitudeInput: $('#Latitud'),
-                longitudeInput: $('#Longitud'),
-                locationNameInput: $('#Direccion')
-            },
-            onchanged: function (currentLocation, radius, isMarkerDropped) {
-                $('#Direccion').html($('#ModalMapaddress').val());
+
+
+            var modal = document.getElementById('ModalNotificacion');
+
+            // Get the button that opens the modal
+            var btn = document.getElementById("btnNuevoNotificacion");
+
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName("close")[0];
+
+            var btnGuardar = document.getElementById("btnGuardar");
+            var btnEditar = document.getElementById("btnEditar");
+            var btnCancelar = document.getElementById("btnCancelar");
+
+            // When the user clicks the button, open the modal
+            btn.onclick = function () {
+                $("#btnGuardar").show();
+                $("#btnEditar").hide();
+                $('#IdUsuario').val(@Session["id"]);
+                console.log(@Session["id"]);
+                modal.style.display = "block";
             }
-        });
-        $('#ModalMap').on('shown.bs.modal', function () {
-            $('#ModalMapPreview').locationpicker('autosize');
-        });
+
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function () {
+                modal.style.display = "none";
+            }
+            btnCancelar.onclick = function () {
+                modal.style.display = "none";
+            }
+
+            btnGuardar.onclick = function () {
+                // Lógica para guardar los datos del formulario
+                // Obtener el formulario por su ID
+                var form = $('#formNotificacion');
+                //console.log("llegue aquu: " + form.submit());
+
+                let formData = form.serializeFormJSON();
+                var url = form.attr('action');
+                var tabla = $("tableNotification");
+                // Enviar la petición AJAX al controlador
+                $.ajax({
+                    type: 'POST', // Método HTTP de la petición
+                    url: url, // URL del controlador
+                    data: formData, // Datos del formulario
+                    success: function (response) {
+
+                        // La petición se completó exitosamente
+                        //console.log(response);
+                        // Realizar acciones adicionales si es necesario
+                        form[0].reset();
+                        var tablas = document.getElementById('tableNotification');
+                        console.log(tablas);
+                        while (tablas.rows.length > 0) {
+                            tablas.deleteRow(0);
+                        }
+                        ListarDatos();
+                        modal.style.display = "none";
+                        //console.log(tabla.find('tr'));
+                        //initMap();
+                    },
+                    error: function (xhr, status, error) {
+                        // Ocurrió un error durante la petición
+                        console.error(error);
+                        // Realizar acciones adicionales si es necesario
+                    }
+                });
+            }
+
+            btnEditar.onclick = function () {
+                // Lógica para modificar el registro del dato del formulario
+                // Obtener el formulario por su ID
+                var form = $('#formNotificacion');
+                let formData = form.serializeFormJSON();
+                var url = form.attr('action');
+                var tabla = $("tableNotification");
+                // Enviar la petición AJAX al controlador
+                $.ajax({
+                    type: 'POST', // Método HTTP de la petición
+                    url: url, // URL del controlador
+                    data: formData, // Datos del formulario
+                    success: function (response) {
+
+                        // La petición se completó exitosamente
+                        //console.log(response);
+                        // Realizar acciones adicionales si es necesario
+                        form[0].reset();
+                        var tablas = document.getElementById('tableNotification');
+                        console.log(tablas);
+                        while (tablas.rows.length > 0) {
+                            tablas.deleteRow(0);
+                        }
+                        ListarDatos();
+                        modal.style.display = "none";
+                        //console.log(tabla.find('tr'));
+                        //initMap();
+                    },
+                    error: function (xhr, status, error) {
+                        // Ocurrió un error durante la petición
+                        console.error(error);
+                        // Realizar acciones adicionales si es necesario
+                    }
+                });
+            }
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function (event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+            function initMap() {
+                var lat = 0;
+                var long = 0;
+                function coordenadas() {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(function (position) {
+                            lat = position.coords.latitude;
+                            long = position.coords.longitude;
+                        });
+                    } else {
+                        console.log('Geolocalización no soportada por el navegador');
+                    }
+                    console.log(lat, long)
+                };
+
+                coordenadas();
+
+                //Metodo para listar las notificaciones
+                //$(document).ready(function () {
+                //    $.ajax({
+                //        url: "ListarNotificacionJson",
+                //        type: "GET",
+                //        dataType: "json",
+                //        success: function (data) {
+                //            //console.log(data.resultado);
+                //            // referenciamos a la tabla donde se cargaran los datos
+                //            var tabla = document.getElementById("tableNotification");
+                //            //console.log(tabla);
+                //            // Crear la cabecera de la tabla
+                //            var cabecera = $("<thead>").appendTo(tabla);
+                //            var filaCabecera = $("<tr>").appendTo(cabecera);
+                //            $("<th>").text("Usuario").appendTo(filaCabecera);
+                //            $("<th>").text("Descripcion").appendTo(filaCabecera);
+                //            $("<th>").text("Direccion").appendTo(filaCabecera);
+                //            $("<th>").text("Fecha").appendTo(filaCabecera);
+                //            $("<th>").text("Acciones").appendTo(filaCabecera);
+
+                //            // Crear el cuerpo de la tabla
+                //            var cuerpo = $("<tbody>").appendTo(tabla);
+                //            var jsonObject = JSON.parse(data.resultado);
+                //            jsonObject.forEach(function (dato) {
+                //                //console.log(dato.Notifiacion);
+                //                var fila = $("<tr>").appendTo(cuerpo);
+                //                $("<td>").text(dato.Usuarios.Usuario).appendTo(fila);
+                //                $("<td>").text(dato.Notifiacion.Descripcion).appendTo(fila);
+                //                $("<td>").text(dato.Notifiacion.Direccion).appendTo(fila);
+                //                $("<td>").text(dato.Notifiacion.Fecha).appendTo(fila);
+
+                //                var btnEditar = $('<button>', {
+                //                    id:"btnEditarElemento",
+                //                    class: "btn bg-success btn-xs btnEditar",
+                //                    title: "Editar",
+                //                    value: dato.Notifiacion.Id
+                //                }).html('<i class="icon icon-pencil"></i>');
+
+                //                var btnEliminar = $('<button>', {
+                //                    id: "btnEliminarElemento",
+                //                    class: "btn bg-danger btn-xs btnEliminar",
+                //                    title: "Eliminar",
+                //                    value: dato.Notifiacion.Id
+                //                }).html('<i class="icon icon-trash"></i>');
+                //                $("<td>").append(btnEditar, btnEliminar).appendTo(fila);
+
+                //            });
+                //        },
+                //        error: function (jqXHR, textStatus, errorThrown) {
+                //            console.log(textStatus, errorThrown);
+                //        }
+                //    });
+                //});
+
+                //$('#btnNuevoNotificacion').click(function () {
+                //    $('#ModalNotificacion').modal();
+                //});
+                ListarDatos();
+
+                // Configurar el autocompletado de Places
+                var input = document.getElementById('Direccion');
+                var autocomplete = new google.maps.places.Autocomplete(input);
+                console.log(autocomplete);
+
+                // Escuchar el evento de selección de Place
+                autocomplete.addListener('place_changed', function () {
+                    var place = autocomplete.getPlace();
+                    console.log(place)
+                    if (place.geometry) {
+                        lat = place.geometry.location.lat();
+                        long = place.geometry.location.lng();
+                        document.getElementById('Latitud').value = lat;
+                        document.getElementById('Longitud').value = long;
+                    } else {
+                        alert('No se encontraron detalles del lugar');
+                    }
+                });
+            }
+
+            function ListarDatos() {
+                $(document).ready(function () {
+                    $.ajax({
+                        url: "ListarNotificacionJson",
+                        type: "GET",
+                        dataType: "json",
+                        success: function (data) {
+                            //console.log(data.resultado);
+                            // referenciamos a la tabla donde se cargaran los datos
+                            var tabla = document.getElementById("tableNotification");
+                            //console.log(tabla);
+                            // Crear la cabecera de la tabla
+                            var cabecera = $("<thead>").appendTo(tabla);
+                            var filaCabecera = $("<tr>").appendTo(cabecera);
+                            $("<th>").text("Usuario").appendTo(filaCabecera);
+                            $("<th>").text("Descripcion").appendTo(filaCabecera);
+                            $("<th>").text("Direccion").appendTo(filaCabecera);
+                            $("<th>").text("Fecha").appendTo(filaCabecera);
+                            if (@obj.idTipoUsuario != 3) {
+                                $("<th>").text("Acciones").appendTo(filaCabecera);
+                            }
+
+                            // Crear el cuerpo de la tabla
+                            var cuerpo = $("<tbody>").appendTo(tabla);
+                            var jsonObject = JSON.parse(data.resultado);
+                            jsonObject.forEach(function (dato) {
+                                //console.log(dato.Notifiacion);
+                                var fila = $("<tr>").appendTo(cuerpo);
+                                $("<td>").text(dato.Usuarios.Usuario).appendTo(fila);
+                                $("<td>").text(dato.Notifiacion.Descripcion).appendTo(fila);
+                                $("<td>").text(dato.Notifiacion.Direccion).appendTo(fila);
+                                $("<td>").text(dato.Notifiacion.Fecha).appendTo(fila);
+
+                                if (@obj.idTipoUsuario != 3) {
+                                    var btnEditar = $('<button>', {
+                                        id: "btnEditarElemento",
+                                        class: "btn bg-success btn-xs btnEditar",
+                                        title: "Editar",
+                                        value: dato.Notifiacion.Id
+                                    }).html('<i class="icon icon-pencil"></i>');
+
+                                    var btnEliminar = $('<button>', {
+                                        id: "btnEliminarElemento",
+                                        class: "btn bg-danger btn-xs btnEliminar",
+                                        title: "Eliminar",
+                                        value: dato.Notifiacion.Id
+                                    }).html('<i class="icon icon-trash"></i>');
+                                    $("<td>").append(btnEditar, btnEliminar).appendTo(fila);
+                                }
+
+                            });
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.log(textStatus, errorThrown);
+                        }
+                    });
+                });
+            }
+            //funcion cuando el usuario haga click en el boton de eliminar de la tabla
+            $(document).ready(function () {
+                // Manejar el evento de clic en el botón para eliminar un dato de la tabla
+                $('#tableNotification').on('click', '#btnEliminarElemento', function () {
+                    // Realizar la acción de eliminación o enviar los datos al controlador
+                    // mostrar una confirmación antes de eliminar el dato
+                    if (confirm('¿Estás seguro de eliminar este dato?')) {
+
+                        $.ajax({
+                            type: 'POST', // Método HTTP de la petición
+                            url: 'EliminarNotificacionId', // URL del controlador
+                            data: { id: this.value }, // Obtener el ID del dato desde el atributo value del botón
+                            success: function (response) {
+                                // La petición se completó exitosamente
+                                alert('Dato eliminado correctamente');
+                            },
+                            error: function (xhr, status, error) {
+                                // Ocurrió un error durante la petición
+                                console.error(error);
+                            }
+                        });
+                        $(this).closest('tr').remove();
+                    }
+                });
+            });
+
+            //funcion para Llenar los datos al hacer click en el boton editar de un registro que el usuario selecciono del la tabla
+            $(document).ready(function () {
+                // Manejar el evento de clic en el botón para eliminar un dato de la tabla
+                $('#tableNotification').on('click', '#btnEditarElemento', function () {
+                    // Realizar la acción de consultar el dato por el controlador
+                    // y obtiene el registro del dato enviado
+                    $.ajax({
+                        url: "ObtenerNotificacionId",
+                        type: "GET",
+                        data: { id: this.value },
+                        success: function (data) {
+                            console.log(data.resultado);
+                            $("#btnGuardar").hide();
+                            $("#btnEditar").show();
+                            var jsonObject = JSON.parse(data.resultado);
+                            console.log(jsonObject);
+                            var datoId = jsonObject.Notifiacion.Id;
+                            var UsuarioId = jsonObject.Notifiacion.IdUsuario;
+                            var descripcion = jsonObject.Notifiacion.Descripcion;
+                            var latitud = jsonObject.Notifiacion.Latitud;
+                            var longitud = jsonObject.Notifiacion.Longitud;
+                            var direccion = "";
+                            var array = [];
+                            async function obtenerDireccionActual() {
+                                try {
+                                    direccion = await obtenerDireccion(latitud, longitud);
+                                    if (direccion != null) {
+                                        array.push(direccion);
+                                        $('#Direccion').val(array[0]);
+                                    }
+                                     otraFuncion(direccion);
+                                } catch (error) {
+                                    console.log(error);
+                                }
+                            }
+
+                            obtenerDireccionActual();
+
+                            function otraFuncion(direccion) {
+                                console.log("Otra función: " + direccion);
+
+                            };
+                            // Llenar los valores en el modal
+                            $('#Id').val(datoId);
+                            $('#IdUsuario').val(UsuarioId);
+                            //$('#Direccion').val(array[0]);
+                            $('#Descripcion').val(descripcion);
+                            $('#Latitud').val(latitud);
+                            $('#Longitud').val(longitud);
+
+                            // Abrir el modal para editar los valores
+                            modal.style.display = "block";
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.log(textStatus, errorThrown);
+                        }
+                    });
+                });
+            });
+
+            //function para obtener la direccion por medio de latLng
+            const obtenerDireccion = function (latitud, longitud) {
+                return new Promise(function (resolve, reject) {
+                    var latlng = new google.maps.LatLng(latitud, longitud);
+                    var geocoder = new google.maps.Geocoder();
+
+                    geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+                        if (status === 'OK') {
+                            if (results[0]) {
+                                var direccion = results[0].formatted_address;
+                                resolve(direccion); // Resuelve la promesa con la dirección obtenida
+                            } else {
+                                reject('No se encontraron resultados de geocodificación');
+                            }
+                        } else {
+                            reject('Error en la geocodificación debido a: ' + status);
+                        }
+                    });
+                });
+            };
     </script>
 </body>
 </html>

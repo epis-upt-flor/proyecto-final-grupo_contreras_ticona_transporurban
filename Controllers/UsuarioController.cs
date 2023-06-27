@@ -103,6 +103,7 @@ namespace Project.Controllers
                         Session["id"] = data.id;
                         Session["nombreCompleto"] = data.nombreCompleto;
                         Session["UsuarioFull"] = data;
+                        Session["Tipo"]=data.idTipoUsuario;
                         respuesta = true;
                         mensaje = "Bienvenido(a) al sistema";
                     }

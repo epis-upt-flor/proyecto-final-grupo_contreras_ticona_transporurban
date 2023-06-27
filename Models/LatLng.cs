@@ -7,12 +7,12 @@ namespace Project.Models
 {
     public class LatLng
     {
-        public LatLng() { }
-        public LatLng(double Lat, double Lng)
+        public LatLng() { } 
+        public LatLng(double Lat, double Lng) 
         {
             Latitude = Lat;
             Longitude = Lng;
-        }
+        } 
 
         public string Ubicacion { get; set; }
         public string Inicio { get; set; }

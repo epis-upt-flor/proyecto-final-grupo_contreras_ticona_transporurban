@@ -9,7 +9,7 @@ namespace Project.DTO
     public partial class ModelMap : DbContext
     {
         public ModelMap()
-              : base("name=ModelMap")
+            : base("name=ModelMap")
         {
         }
         public virtual DbSet<Notificacion> Notificacion { get; set; }

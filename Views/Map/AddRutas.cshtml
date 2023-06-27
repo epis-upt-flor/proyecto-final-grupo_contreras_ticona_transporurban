@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<Project.DTO.Ubicacion>
 @{
-    Layout = null;
+    //Layout = null;
     List<Project.DTO.Transporte> transportes = ViewBag.Transportes;
     Project.DTO.Transporte transporte = ViewBag.Transporte;
-    double latitudLinea = 0;
-    double longitudLinea = 0;
+    double latitudLinea = Convert.ToDouble(transporte.Latitud);
+    double longitudLinea = Convert.ToDouble(transporte.Longitud);
 }
 <!DOCTYPE html>
 
@@ -20,6 +20,7 @@
     <!-- Fin -->
     <!-- Complementos de JQuery -->
     <script src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=places&key=AIzaSyB60bIrSUlI-80w4hhJ4tdLNj5LJMIpxKs"></script>
+    @*<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB60bIrSUlI-80w4hhJ4tdLNj5LJMIpxKs&callback=initMap&libraries=places,geometry&solution_channel=GMP_QB_commutes_v2_c" async defer></script>*@
     <script src="~/Script/locationpicker.jquery.js"></script>
 </head>
 <body>
@@ -28,6 +29,7 @@
             <div class="col-md-4">
                 @using (Html.BeginForm("Create", "Map"))
                 {
+                @*<form id="Create" action="Create" method="post">*@
                     @Html.AntiForgeryToken()
 
                     <div class="form-group">
@@ -53,7 +55,8 @@
                         <a href="~/Map/Index" class="btn btn-primary">Regresar</a>
                         @*@Html.ActionLink("Regresar", "Index", null, new { @class = "btn btn-primary" })*@
                     </div>
-                }
+                 @*</form>*@
+                   }
             </div>
             <div class="col-md-8">
                 <br />
@@ -77,39 +80,39 @@
 
                     @foreach (var item in Model)
                     {
-                        foreach (var transporteId in transportes)
+                        //foreach (var transporteId in transportes)
+                        //{
+                        if (transporte.Id == item.IdTransporte)
                         {
-                            if (transporteId.Id == item.IdTransporte)
-                            {
-                                if (item.IdTransporte == 0)
-                                {
-                                    latitudLinea = Convert.ToDouble(transporte.Latitud);
-                                    longitudLinea = Convert.ToDouble(transporte.Longitud);
-                                }
-                                else
-                                {
-                                    latitudLinea = Convert.ToDouble(transporteId.Latitud);
-                                    longitudLinea = Convert.ToDouble(transporteId.Longitud);
-                                }
-                                <tr>
-                                    <th>
-                                        @Html.DisplayFor(x => transporteId.Nombre)
-                                    </th>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Ubicacion1)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Latitud)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Longitud)
-                                    </td>
-                                    <td>
-                                        @Html.ActionLink("Edit", "Edit", new { id = item.Id })
-                                    </td>
-                                </tr>
-                            }
+                            //if (item.IdTransporte == 0)
+                            //{
+                            //    latitudLinea = Convert.ToDouble(transporte.Latitud);
+                            //    longitudLinea = Convert.ToDouble(transporte.Longitud);
+                            //}
+                            //else
+                            //{
+                            //    latitudLinea = Convert.ToDouble(transporteId.Latitud);
+                            //    longitudLinea = Convert.ToDouble(transporteId.Longitud);
+                            //}
+                            <tr>
+                                <th>
+                                    @Html.DisplayFor(x => transporte.Nombre)
+                                </th>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Ubicacion1)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Latitud)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Longitud)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+                                </td>
+                            </tr>
                         }
+                        @*}*@
                     }
                 </table>
             </div>
@@ -118,8 +121,20 @@
     <script>
         var lat = '@latitudLinea';
         var long = '@longitudLinea';
+        console.log(lat, long);
         //var lat = -18.0759509;
         //var long = -70.24771559999999;
+        // Agregar marcadores en cada ubicación
+        var ubicaciones = [];
+        @foreach (var ubicacion in Model)
+        {
+            @:ubicaciones.push({
+            @:    Latitud: '@ubicacion.Latitud',
+            @:    Longitud: '@ubicacion.Longitud'
+            @:});
+        }
+        console.log(ubicaciones);
+
         $('#ModalMapPreview').locationpicker({
             radius: 0,
             location: {
@@ -134,11 +149,31 @@
             },
             onchanged: function (currentLocation, radius, isMarkerDropped) {
                 $('#ubicacion').html($('#ModalMapaddress').val());
+                //$('#ModalMapPreview').locationpicker('marker', 'setLocation', currentLocation);
+            },
+            oninitialized: function (component) {
+                var map = component.map;
+
+                // Agregar los marcadores en las ubicaciones especificadas
+                ubicaciones.forEach(function (index) {
+                    var lat = index.Laitud;
+                    var lng = index.Longitud;
+
+                    if (lat && lng) {
+                        var location = new google.maps.LatLng(lat, lng);
+                        component.addMarker(location);
+                    }
+                });
             }
         });
+
+        //ubicaciones.forEach(function (ubicacion) {
+        //   $('#ModalMapPreview').locationpicker('location', ubicacion);
+        //});
         $('#ModalMap').on('shown.bs.modal', function () {
             $('#ModalMapPreview').locationpicker('autosize');
         });
+
     </script>
 </body>
 </html>
