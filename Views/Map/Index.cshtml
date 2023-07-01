@@ -1,6 +1,10 @@
-﻿
+﻿@using Newtonsoft.Json;
 @{
-    Project.DTO.Transporte transportes = ViewBag.Transportes;
+    Project.DTO.Transporte transporte = ViewBag.Transporte;
+    List<Project.DTO.Transporte> transportes = ViewBag.Transportes;
+    string transportesJson = JsonConvert.SerializeObject(transportes);
+    string iconoUrl = Url.Content("~/styles/assets/image/autobus.png");
+
     ViewBag.Title = "Index";
 }
 
@@ -275,7 +279,7 @@
                 <button type="button" class="btn btn-primary" id="btnNuevoNotificacion">Agregar Ruta</button>
             </div>
         </div>
-       
+
         <div id="ModalRutas" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -307,6 +311,166 @@
     </div>
 
     <script>
+        @*function initMap() {
+            var latTransporte = @transporte.Latitud;
+            var lngTransporte = @transporte.Longitud;
+            var map = new google.maps.Map(document.getElementById('ModalMapPreview'), {
+                //center: new google.maps.LatLng(-17.99426, -70.251855),
+                center: new google.maps.LatLng(latTransporte, lngTransporte),
+                zoom: 14,
+                heading: 90,
+                tilt: 45
+            });
+            var infoWindow = new google.maps.InfoWindow;
+            $(document).ready(function () {
+                $.ajax({
+                    url: "ListaRutas",
+                    type: "GET",
+                    dataType: "json",
+                    success: function (datos) {
+                        //var transportes = transportes;
+                        //$.each(transportes, function (indice, registro) {
+                            //var LatLineaRuta = registro.Latitud;
+                            //var LngLineaRuta = registro.Longitud;
+                            // console.log(datos);
+                            // recorrer los datos JSON y construir una tabla HTML
+                            $.each(datos, function (index, fila) {
+                                // console.log(fila.Id, fila.Ubicacion1, fila.Latitud, fila.Longitud);
+                                //if (registro.Id == fila.IdTransporte) {
+                                    var idmapa = fila.Id;
+                                    var ubicacion = fila.Ubicacion1;
+                                    var point = new google.maps.LatLng(
+                                        parseFloat(fila.Latitud),
+                                        parseFloat(fila.Longitud));
+                                    const contentString =
+                                        '<div id="content">' +
+                                        '<div id="siteNotice">' +
+                                        "</div>" +
+                                        '<center>' +
+                                        '<h3 id="ubicacion">' + ubicacion + '</h3>' +
+                                        '</center>' +
+                                        '<br>' +
+                                        '<div id="bodyContent">' +
+                                        '<br>' +
+                                        "<p><b>" + ubicacion + "</p>" +
+                                        "</p>" +
+                                        "</div>" +
+                                        "</div>";
+                                    var marker = new google.maps.Marker({
+                                        map: map,
+                                        position: point,
+                                        //icon: image
+                                    });
+                                    marker.addListener('click', function () {
+                                        infoWindow.setContent(contentString);
+                                        infoWindow.open(map, marker);
+                                    });
+                                    var objConfigDR = {
+                                        map: map,
+                                        suppressMarkers: true
+                                    };
+                                    var objConfigDS = {
+                                        origin: new google.maps.LatLng(latTransporte, lngTransporte), // LatLng - string domicilio
+                                        //origin: new google.maps.LatLng(LatLineaRuta, LngLineaRuta), // LatLng - string domicilio
+                                        destination: new google.maps.LatLng(fila.Latitud, fila.Longitud),
+                                        travelMode: google.maps.TravelMode.DRIVING
+                                    }
+                                    // console.log(objConfigDS);
+                                    var ds = new google.maps.DirectionsService(); //Obtener coordenadas
+                                    var dr = new google.maps.DirectionsRenderer(objConfigDR); //traduce coordenadas a la ruta visible
+                                    ds.route(objConfigDS, rutear);
+                                    function rutear(resultados, status) {
+                                        //mostrar rutas con coordenadas
+                                        if (status == 'OK') {
+                                            dr.setDirections(resultados);
+                                        } else {
+                                            alert("Error " + status);
+                                        }
+                                    }
+                                //}
+                            });
+                        //});
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log(textStatus, errorThrown);
+                    }
+                });
+            });
+        }*@
+        var colores = [
+            "#FF0000", // Rojo
+            "#00FF00", // Verde
+            "#0000FF", // Azul
+            "#FFA500", // Naranja
+            "#FFFF00", // Amarillo
+            "#800080", // Púrpura
+            "#FFC0CB", // Rosa
+            "#008000", // Verde oscuro
+            "#000080", // Azul oscuro
+            "#FF00FF", // Magenta
+            "#800000", // Marrón
+            "#00FFFF", // Cian
+            "#FF1493", // Rosa intenso
+            "#008080", // Verde azulado
+            "#800080", // Púrpura
+            "#FF4500", // Naranja intenso
+            "#C0C0C0", // Plata
+            "#808080", // Gris
+            "#000000", // Negro
+            "#FFFFFF"  // Blanco
+        ];
+        var iterador = 0;
+        // En tu archivo JavaScript
+        function initMap() {
+            var latTransporte = @transporte.Latitud;
+            var lngTransporte = @transporte.Longitud;
+            var map = new google.maps.Map(document.getElementById('ModalMapPreview'), {
+                center: { lat: latTransporte, lng: lngTransporte },
+                zoom: 10
+            });
+            var LineasRutas = @Html.Raw(Json.Encode(ViewBag.LineasRutas));
+            var rutas = @Html.Raw(Json.Encode(ViewBag.Rutas));
+            var iconoUrl = '@iconoUrl';
+            var icono = {
+                url: iconoUrl,
+                scaledSize: new google.maps.Size(50, 28),
+                //origin: new google.maps.Point(0, 0),
+                //anchor: new google.maps.Point(16, 16),
+                //optimized: false 
+            };
+            // Mostrar marcadores para cada transporte
+            LineasRutas.forEach(function(transporte) {
+                var marker = new google.maps.Marker({
+                    position: { lat: transporte.Latitud, lng: transporte.Longitud },
+                    map: map,
+                    title: transporte.Nombre,
+                    icon: iconoUrl
+                });
+                var rutaCoords = [];
+                // Filtrar las rutas correspondientes a este transporte
+                var rutasTransporte = rutas.filter(function(ruta) {
+                    return ruta.IdTransporte === transporte.Id;
+                });
+                rutaCoords.push({ lat: transporte.Latitud, lng: transporte.Longitud });
+                // Dibujar las rutas en el mapa
+                rutasTransporte.forEach(function(ruta) {
+                    rutaCoords.push({ lat: ruta.Latitud, lng: ruta.Longitud })
+                });
+
+                var rutaPolyline = new google.maps.Polyline({
+                    path: rutaCoords,
+                    geodesic: true,
+                    strokeColor: colores[iterador],
+                    strokeOpacity: 2.5,
+                    strokeWeight: 5
+                });
+
+                rutaPolyline.setMap(map);
+                iterador++;
+            });
+        }
+
+
         var app = new Vue({
             el: '#app',
             data: {
@@ -401,88 +565,22 @@
             // Agregar la nueva tarjeta al contenedor
             $('#card-container').append(newCard);
         }
-        function initMap() {
-            var latTransporte = @transportes.Latitud;
-            var lngTransporte = @transportes.Longitud;
-            var map = new google.maps.Map(document.getElementById('ModalMapPreview'), {
-                //center: new google.maps.LatLng(-17.99426, -70.251855),
-                center: new google.maps.LatLng(latTransporte, lngTransporte),
-                zoom: 14,
-                heading: 90,
-                tilt: 45
-            });
-            var infoWindow = new google.maps.InfoWindow;
-            $(document).ready(function () {
-                $.ajax({
-                    url: "ListaRutas",
-                    type: "GET",
-                    dataType: "json",
-                    success: function (datos) {
-                       // console.log(datos);
-                        // recorrer los datos JSON y construir una tabla HTML
-                        $.each(datos, function (index, fila) {
-                           // console.log(fila.Id, fila.Ubicacion1, fila.Latitud, fila.Longitud);
-                            var idmapa = fila.Id;
-                            var ubicacion = fila.Ubicacion1;
-                            var point = new google.maps.LatLng(
-                                parseFloat(fila.Latitud),
-                                parseFloat(fila.Longitud));
-                            const contentString =
-                                '<div id="content">' +
-                                '<div id="siteNotice">' +
-                                "</div>" +
-                                '<center>' +
-                                '<h3 id="ubicacion">' + ubicacion + '</h3>' +
-                                '</center>' +
-                                '<br>' +
-                                '<div id="bodyContent">' +
-                                '<br>' +
-                                "<p><b>" + ubicacion + "</p>" +
-                                "</p>" +
-                                "</div>" +
-                                "</div>";
-                            var marker = new google.maps.Marker({
-                                map: map,
-                                position: point,
-                                //icon: image
-                            });
-                            marker.addListener('click', function () {
-                                infoWindow.setContent(contentString);
-                                infoWindow.open(map, marker);
-                            });
-                            var objConfigDR = {
-                                map: map,
-                                suppressMarkers: true
-                            };
-                            var objConfigDS = {
-                                origin: new google.maps.LatLng(latTransporte, lngTransporte), // LatLng - string domicilio
-                                destination: new google.maps.LatLng(fila.Latitud, fila.Longitud),
-                                travelMode: google.maps.TravelMode.DRIVING
-                            }
-                           // console.log(objConfigDS);
-                            var ds = new google.maps.DirectionsService(); //Obtener coordenadas
-                            var dr = new google.maps.DirectionsRenderer(objConfigDR); //traduce coordenadas a la ruta visible
-                            ds.route(objConfigDS, rutear);
-                            function rutear(resultados, status) {
-                                //mostrar rutas con coordenadas
-                                if (status == 'OK') {
-                                    dr.setDirections(resultados);
-                                } else {
-                                    alert("Error " + status);
-                                }
-                            }
-                        });
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log(textStatus, errorThrown);
-                    }
-                });
-            });
-        }
         const scrollImages = document.querySelector(".scroll-images");
         const scrollLength = scrollImages.scrollWidth - scrollImages.clientWidth;
         const leftButton = document.querySelector(".left");
-        const rightButton = document.querySelector(".right");
+        const rightButton = document.querySelector(".right");        
+        function leftScroll() {
+            scrollImages.scrollBy({
+                left: -200,
+                behavior: "smooth"
+            });
+        }
+        function rightScroll() {
+            scrollImages.scrollBy({
+                left: 200,
+                behavior: "smooth"
+            });
+        }
         document.addEventListener("DOMContentLoaded", function () {
             function checkScroll() {
                 const currentScroll = scrollImages.scrollLeft;
@@ -515,18 +613,6 @@
             leftButton.addEventListener("click", leftScroll);
             rightButton.addEventListener("click", rightScroll);
         });
-        function leftScroll() {
-            scrollImages.scrollBy({
-                left: -200,
-                behavior: "smooth"
-            });
-        }
-        function rightScroll() {
-            scrollImages.scrollBy({
-                left: 200,
-                behavior: "smooth"
-            });
-        }
 
         var modal = document.getElementById('ModalRutas');
 

@@ -1,10 +1,12 @@
-﻿@model IEnumerable<Project.DTO.Ubicacion>
+﻿@using Newtonsoft.Json;
+@model IEnumerable<Project.DTO.Ubicacion>
 @{
     ViewBag.Title = "Polilines";
     List<Project.DTO.Transporte> transportes = ViewBag.Transportes;
     Project.DTO.Transporte transporte = ViewBag.Transporte;
     double latitudLinea = 0;
     double longitudLinea = 0;
+    string iconoUrl = Url.Content("~/styles/assets/image/autobus.png");
 }
 
 <!DOCTYPE html>
@@ -23,7 +25,9 @@
     <script src="~/Script/locationpicker.jquery.js"></script>
 </head>
 <body>
-    <div class="container">
+  
+    <!-- /CAMBIO DE COLOR -->
+    <div class="container" style="background-color:">
         <div class="row">
             <div class="col-md-4">
                 <form id="CoincidenciaForm" action="/Map/RutasCerca" method="post">
@@ -103,32 +107,93 @@
                 console.log('Geolocalización no soportada por el navegador');
             }
 
+            var iconoUrl = '@iconoUrl';
+            var LineasRutas = @Html.Raw(Json.Encode(ViewBag.LineasRutas));
+            var rutPublico = @Html.Raw(Json.Encode(ViewBag.Rutas));
+            // Mostrar marcadores para cada transporte
+            LineasRutas.forEach(function (transporte) {
+                var marker = new google.maps.Marker({
+                    position: { lat: transporte.Latitud, lng: transporte.Longitud },
+                    map: map,
+                    title: transporte.Nombre,
+                    icon: iconoUrl
+                });
+                var rutaCoords = [];
+                // Filtrar las rutas correspondientes a este transporte
+                var rutasTransporte = rutPublico.filter(function (ruta) {
+                    return ruta.IdTransporte === transporte.Id;
+                });
+                rutaCoords.push({ lat: transporte.Latitud, lng: transporte.Longitud });
+                // Dibujar las rutas en el mapa
+                rutasTransporte.forEach(function (ruta) {
+                    rutaCoords.push({ lat: ruta.Latitud, lng: ruta.Longitud })
+                });
+
+                var rutaPolyline = new google.maps.Polyline({
+                    path: rutaCoords,
+                    geodesic: true,
+                    strokeColor: '#FF0000',
+                    strokeOpacity: 2.5,
+                    strokeWeight: 5
+                });
+
+                rutaPolyline.setMap(map);
+                iterador++;
+            });
+
             $(document).ready(function () {
                 $.ajax({
-                    url: "ListaRutas",
+                    url: "listTransports",
                     type: "GET",
                     dataType: "json",
                     success: function (datos) {
                         console.log(datos);
                         // recorrer los datos JSON y construir las líneas en el mapa
                         $.each(datos, function (index, fila) {
-                            console.log(fila.Id, fila.Ubicacion1, fila.Latitud, fila.Longitud);
+                            console.log(fila.Id, fila.Nombre, fila.Latitud, fila.Longitud);
                             var idmapa = fila.Id;
-                            var ubicacion = fila.Ubicacion1;
+                            var nombre = fila.Nombre;
                             var puntoLat = parseFloat(fila.Latitud);
                             var puntoLng = parseFloat(fila.Longitud);
+                            var marker = new google.maps.Marker({
+                                position: { lat: puntoLat, lng: puntoLng },
+                                map: map,
+                                title: nombre,
+                                icon: iconoUrl
+                            });
+                            var rutaCoords = [];
+                            // Filtrar las rutas correspondientes a este transporte
+                            var rutasTransporte = rutPublico.filter(function (ruta) {
+                                return ruta.IdTransporte === fila.Id;
+                            });
+                            rutaCoords.push({ lat: transporte.Latitud, lng: transporte.Longitud });
+                            // Dibujar las rutas en el mapa
+                            rutasTransporte.forEach(function (ruta) {
+                                rutaCoords.push({ lat: ruta.Latitud, lng: ruta.Longitud })
+                            });
 
-                            routes.push({ lat: puntoLat, lng: puntoLng });
+                            var rutaPolyline = new google.maps.Polyline({
+                                path: rutaCoords,
+                                geodesic: true,
+                                strokeColor: '#FF0000',
+                                strokeOpacity: 2.5,
+                                strokeWeight: 5
+                            });
+
+                            rutaPolyline.setMap(map);
+                            iterador++;
+
+                            //routes.push({ lat: puntoLat, lng: puntoLng });
                         });
 
-                        const polylines = new google.maps.Polyline({
-                            path: routes,
-                            geodesic: true,
-                            strokeColor: "#FF0000",
-                            strokeOpacity: 1.0,
-                            strokeWeight: 2,
-                        });
-                        polylines.setMap(map);
+                        //const polylines = new google.maps.Polyline({
+                        //    path: routes,
+                        //    geodesic: true,
+                        //    strokeColor: "#FF0000",
+                        //    strokeOpacity: 1.0,
+                        //    strokeWeight: 2,
+                        //});
+                        //polylines.setMap(map);
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         console.log(textStatus, errorThrown);
@@ -153,6 +218,29 @@
                 }
             });
 
+            var colores = [
+                "#FF0000", // Rojo
+                "#00FF00", // Verde
+                "#0000FF", // Azul
+                "#FFA500", // Naranja
+                "#FFFF00", // Amarillo
+                "#800080", // Púrpura
+                "#FFC0CB", // Rosa
+                "#008000", // Verde oscuro
+                "#000080", // Azul oscuro
+                "#FF00FF", // Magenta
+                "#800000", // Marrón
+                "#00FFFF", // Cian
+                "#FF1493", // Rosa intenso
+                "#008080", // Verde azulado
+                "#800080", // Púrpura
+                "#FF4500", // Naranja intenso
+                "#C0C0C0", // Plata
+                "#808080", // Gris
+                "#000000", // Negro
+                "#FFFFFF"  // Blanco
+            ];
+            var iterador = 0;
             const dataRoutes = [];
             document.getElementById("CoincidenciaForm").addEventListener("submit", function (e) {
                 e.preventDefault(); // Evita que el formulario se envíe de forma predeterminada

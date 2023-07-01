@@ -19,7 +19,40 @@ namespace Project.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            ViewBag.Transportes = db.Transporte.Find(1);
+            ViewBag.Transporte = db.Transporte.Find(1);
+            ViewBag.Transportes = db.Transporte.ToList();
+
+            // Obtener la lista de transportes con latitud y longitud
+            List<Transporte> transportes = db.Transporte.ToList();
+
+            // Obtener la lista de rutas de cada transporte
+            List<Ubicacion> rutas = db.Ubicacion.ToList();
+
+            // Proyectar los transportes a una lista de TransporteViewModel
+            List<TransporteViewModel> transportesViewModel = transportes.Select(t => new TransporteViewModel
+            {
+                Id = t.Id,
+                Nombre = t.Nombre,
+                Latitud = Convert.ToDecimal(t.Latitud),
+                Longitud = Convert.ToDecimal(t.Longitud),
+                // Otras propiedades que necesites
+            }).ToList();
+
+            // Proyectar los transportes a una lista de TransporteViewModel
+            List<UbicacionViewModel> ubicacionesViewModel = rutas.Select(u => new UbicacionViewModel
+            {
+                Id = u.Id,
+                IdTransporte = u.IdTransporte,
+                Ubicacion = u.Ubicacion1,
+                Latitud = Convert.ToDecimal(u.Latitud),
+                Longitud = Convert.ToDecimal(u.Longitud),
+                // Otras propiedades que necesites
+            }).ToList();
+
+            // Pasar los datos al modelo de la vista
+            ViewBag.LineasRutas = transportesViewModel;
+            ViewBag.Rutas = ubicacionesViewModel;
+
             return View();
         }
         [HttpGet]
@@ -29,9 +62,9 @@ namespace Project.Controllers
             var ubicacion = db.Ubicacion.Where(x => x.IdTransporte == id).ToList();
             //if (ubicacion.Count == 0)
             //{
-                //ViewBag.Transportes = db.Transporte.ToList();
-                ViewBag.Transporte = db.Transporte.Find(id);
-                return View(ubicacion);
+            //ViewBag.Transportes = db.Transporte.ToList();
+            ViewBag.Transporte = db.Transporte.Find(id);
+            return View(ubicacion);
             //}
             //else
             //{
@@ -50,13 +83,13 @@ namespace Project.Controllers
             {
                 db.Ubicacion.Add(ubicacion);
                 db.SaveChanges();
-                return RedirectToAction("AddRutas",new { id = id });
+                return RedirectToAction("AddRutas", new { id = id });
             }
 
             //ViewBag.IdTransporte = new SelectList(db.Transporte, "Id", "Nombre", ubicacion.IdTransporte);
             ViewBag.Transporte = db.Transporte.Find(ubicacion.IdTransporte);
             var ubicaciones = db.Ubicacion.Where(x => x.IdTransporte == ubicacion.IdTransporte).ToList();
-            return RedirectToAction("AddRutas",ubicaciones);
+            return RedirectToAction("AddRutas", ubicaciones);
         }
         // GET: Ubicacions/Edit/5
         public ActionResult Edit(int? id)
@@ -93,7 +126,7 @@ namespace Project.Controllers
             ViewBag.Transportes = db.Transporte.Find(1);
             return View();
         }
-        [HttpPost]        
+        [HttpPost]
         public JsonResult CreateTransporte(Transporte transporte)
         {
             bool estado = false;
@@ -124,7 +157,7 @@ namespace Project.Controllers
             }
 
             return new JsonResult { Data = new { estado = estado } };
-        }        
+        }
         [HttpGet]
         public ActionResult Rutas()
         {
@@ -146,6 +179,36 @@ namespace Project.Controllers
         }
         public ActionResult Polilines()
         {
+            // Obtener la lista de transportes con latitud y longitud
+            List<Transporte> publico = db.Transporte.ToList();
+
+            // Obtener la lista de rutas de cada transporte
+            List<Ubicacion> rutas = db.Ubicacion.ToList();
+
+            // Proyectar los transportes a una lista de TransporteViewModel
+            List<TransporteViewModel> transportesViewModel = publico.Select(t => new TransporteViewModel
+            {
+                Id = t.Id,
+                Nombre = t.Nombre,
+                Latitud = Convert.ToDecimal(t.Latitud),
+                Longitud = Convert.ToDecimal(t.Longitud),
+                // Otras propiedades que necesites
+            }).ToList();
+
+            // Proyectar los transportes a una lista de TransporteViewModel
+            List<UbicacionViewModel> ubicacionesViewModel = rutas.Select(u => new UbicacionViewModel
+            {
+                Id = u.Id,
+                IdTransporte = u.IdTransporte,
+                Ubicacion = u.Ubicacion1,
+                Latitud = Convert.ToDecimal(u.Latitud),
+                Longitud = Convert.ToDecimal(u.Longitud),
+                // Otras propiedades que necesites
+            }).ToList();
+
+            // Pasar los datos al modelo de la vista
+            ViewBag.LineasRutas = transportesViewModel;
+            ViewBag.Rutas = ubicacionesViewModel;
             var ubicacion = db.Ubicacion.Include(u => u.Transporte);
             if (ubicacion == null)
             {
@@ -162,51 +225,73 @@ namespace Project.Controllers
 
         public ActionResult RutasCerca(string Destino, string Latitud, string Longitud, string Inicio, string InicioLat, string InicioLng)
         {
-           string encodePolyline = "ho|lBnctkLMWSYUYMWMWU_@QSIOMQQYIKW_@UYOQGMOUQ[QUKQOWU]QYMSSYS_@OWQYS[MS[i@Sg@g@o@w@}Aq@cA_A{Au@eAo@wAm@{@WU[PSLc@\\a@Xg@^c@^m@f@c@\\m@b@o@h@m@^k@b@s@f@o@j@m@j@e@^a@^o@j@s@l@a@^OLGCK_@";
-            //string encodePolyline = "bpbmB~zxkL?I?G?G?I?G?G@K?I?I?G?G?I?G@K?I?G?I@K?M?I?M@O?M?K?M?I?K@I?I?K?I?I?K@M@M@M?K@K@M@MAM?M?KAK?K?G?K?I?O@Q?S@Q@Q?O?Q@U?Q?S?Q@S?O?M?Q?S?U?Q@S?EIAM?KAM?OAM?MAM?M?OAM?MAM?KAIAI?K?K?K?I?M?KAK?K?M?K?M?MAK?K?K?KAI?K?KAK?K?I?IAI?I?K?IAG?I?I?I?K?K?K?I?I?MAM@M?M?IAK?KAI?K?KAK?K?IAK?M?KAK?K?M?KAK?I?K?KAK?I?I?K?KAI?I?K?I?I?I?I?I?ICIAI?G?K?K?KAK?M?MAK?O?OAO?M?OAO?M?MAK?K?M?KAK?K?K?IAM?I?KAMCMCGAI?K?K?KAO?Q?QAI?K?MAM@M?O?M@M?IAM?M?K?I?KAKAKAKAMAMAMAK?K?K?I?I?K?I?IAK?M?O?O?OAK?M?M?MAK?O?OAM?O?OAM?M?O?QAO?QAQ?S?OAM?Q?QAO?O?Q?U?S?S?K?GAICECIIGKEIGEKIKEMCOAMAI@K@IBIDGDEDEFEHEHEBGBGDIBGDIBKFGBIBIBO?K@I@I?K@I?K@K@K?OBK?K@KBM@I@G@G@GBK@KBKBMBKBKBMBGBGBIDIDKDGBKFIBIBODODODODKBMBMBMDI@MDMBMBKBMDKBKBK@KBKBMBKBKBK@KBI@IBMBKBI@GBIDGBIDG@GDIBKBKBI@KBIBK@MBKBK@IBK@OBMBKBIBIBIBKBIBIBIBKBIBIBG@GBI@G@G@IBI@KBI@K@KBI@I@G@KBK?M@I@K@K?I@M?M@M@M?K@M?K?M@M?K@K@K?M@M?M@M?O@M?M@K?K@I?M?M@K?M?M@M?I?M@K?M@M?M?K@Q?K@M?K?I@K?I?M@M?K@K?K?M@K?M?M@K?E?EIIWG_@Gc@G]G[G]ESOWKUMUKSQWGKMQMMIKOOKKMOQUMQKMMQKOKOMOMQMQKOIKIMOQMQKMKMIMIKGKIKKMIKKMIMKMIIKMMQKMIKKMGIKOKMIKGIIIGKIKGIIMKKIMIKIMIKIKIMIKIMKOIKIKGKIMKMIMKOMOIMIKGIIKIMKMGIGKIKIKGIIKIMIKGIEIGIIKGIGKIKIMIKGIGKGGGKGGGKIMIKEGIFGDGFEBGDIDGDGDIDGDIDGBGBIDKDIDIBGBIDGBG@G?EBGBGDGBGDKDKFGDIBIDKFIDIDKDIDKFIDIDIDGBIDMDMFKDIBIDIDMDMFMDOHMDKDKDIDGBIDIDIDIDIFKFIDMFMHIDKFKFIDIFIDIDEBCBEGIMGKGGGIIGGOKQGQGOGOEQEQGOHGHK@Q?MAMEIEGEGAUCQAQCQCSEUCUEOCMCMAQCO?OAQAUAMCOEUCQESCQCQAOCQCOCKAOCQEUCUEWCYCQESCUCUCOE]G_@I]KYI[IQKWKSMUMWOYKSKQKQIMMSKMKOMUIMS[MSKOIMEGKHKHMJHLHLFJHLHJHJHLHJHPDJFNDLFPFPDLFPDLBFGDGFEDIFGFMJIHIHGDGFIHKHGFKHIHIHGFKHIFKJIFKJMJIHKJIFIFKJIFKHKHIHIFIHKHKHIFIFIHKHGFEBGFIFIHGDEDGDGFGFGDGFGFGFGDGFGDGDGFGDIFIFGDGDIDIFGDGDEDGBIDIFKFKDIDIFIBIBKDKBIBIDGBKBIBKBIBIBKBI@GBGBI@IBG@G@I@G@I@I@K@G?G@I?IAI?K?M?K?K?K?M?K?G?KAMAI?K?K?K?K?I?K?K?K?K?K?M?I?K?K?K@I?I?G?K?I?I?K@M?K?K?I?G?I?I?I@K?I?E?ICIEG?M?Q?K?O?M?O?O?O?O?Q?O?O?Q?O?Q?O?M?M?M?M?O?O?O?O?O?O?O?M?M?Q?M?I?M?M?I?O?M?M?K?G?K?I?C??HAJ?F?H?H?N?T?J?L?N?L?LAN?L?L?L?L?N?N?N?L?L?N?L?P?P?R?P?R?R?L?L?N?P?R?PAN?R?L?P?L?JAH?H@J?J?L?L?P?H@P?N?R?L?N?J?L?L?J?J?J?J?J?L@JAJ@LAL@J?L?L?J?H?J?L?L?J?N?L?L?N?L?N@J?L@J@L@N@LBL@L@HBL@L@LBL@LBN@JG?I?I?K?I?I?I?I?G?K?I?I?G?@H?L?FH?F?H?DAF@FAF?H?F?H?F?H?F?H?D?";
-            //string encodePolyline = "bpbmB~zxkL?I?G?G?I?G?G@K?I?I?G?G?I?G@K?I?G?I@K?M?I?M@O?M?K?M?I?K@I?I?K?I?I?K@M@M@M?K@K@M@MAM?M?KAK?K?G?K?I?O@Q?S@Q@Q?O?Q@U?Q?S?Q@S?O?M?Q?S?U?Q@S?EIAM?KAM?OAM?MAM?M?OAM?MAM?KAIAI?K?K?K?I?M?KAK?K?M?K?M?MAK?K?K?KAI?K?KAK?K?I?IAI?I?K?IAG?I?I?I?K?K?K?I?I?MAM@M?M?IAK?KAI?K?KAK?K?IAK?M?KAK?K?M?KAK?I?K?KAK?I?I?K?KAI?I?K?I?I?I?I?I?ICIAI?G?K?K?KAK?M?MAK?O?OAO?M?OAO?M?MAK?K?M?KAK?K?K?IAM?I?KAMCMCGAI?K?K?KAO?Q?QAI?K?MAM@M?O?M@M?IAM?M?K?I?KAKAKAKAMAMAMAK?K?K?I?I?K?I?IAK?M?O?O?OAK?M?M?MAK?O?OAM?O?OAM?M?O?QAO?QAQ?S?OAM?Q?QAO?O?Q?U?S?S?K?GAICECIIGKEIGEKIKEMCOAMAI@K@IBIDGDEDEFEHEHEBGBGDIBGDIBKFGBIBIBO?K@I@I?K@I?K@K@K?OBK?K@KBM@I@G@G@GBK@KBKBMBKBKBMBGBGBIDIDKDGBKFIBIBODODODODKBMBMBMDI@MDMBMBKBMDKBKBK@KBKBMBKBKBK@KBI@IBMBKBI@GBIDGBIDG@GDIBKBKBI@KBIBK@MBKBK@IBK@OBMBKBIBIBIBKBIBIBIBKBIBIBG@GBI@G@G@IBI@KBI@K@KBI@I@G@KBK?M@I@K@K?I@M?M@M@M?K@M?K?M@M?K@K@K?M@M?M@M?O@M?M@K?K@I?M?M@K?M?M@M?I?M@K?M@M?M?K@Q?K@M?K?I@K?I?M@M?K@K?K?M@K?M?M@K?E?EIIWG_@Gc@G]G[G]ESOWKUMUKSQWGKMQMMIKOOKKMOQUMQKMMQKOKOMOMQMQKOIKIMOQMQKMKMIMIKGKIKKMIKKMIMKMIIKMMQKMIKKMGIKOKMIKGIIIGKIKGIIMKKIMIKIMIKIKIMIKIMKOIKIKGKIMKMIMKOMOIMIKGIIKIMKMGIGKIKIKGIIKIMIKGIEIGIIKGIGKIKIMIKGIGKGGGKGGGKIMIKEGIFGDGFEBGDIDGDGDIDGDIDGBGBIDKDIDIBGBIDGBG@G?EBGBGDGBGDKDKFGDIBIDKFIDIDKDIDKFIDIDIDGBIDMDMFKDIBIDIDMDMFMDOHMDKDKDIDGBIDIDIDIDIFKFIDMFMHIDKFKFIDIFIDIDEBCBEGIMGKGGGIIGGOKQGQGOGOEQEQGOHGHK@Q?MAMEIEGEGAUCQAQCQCSEUCUEOCMCMAQCO?OAQAUAMCOEUCQESCQCQAOCQCOCKAOCQEUCUEWCYCQESCUCUCOE]G_@I]KYI[IQKWKSMUMWOYKSKQKQIMMSKMKOMUIMS[MSKOIMEGKHKHMJHLHLFJHLHJHJHLHJHPDJFNDLFPFPDLFPDLBFGDGFEDIFGFMJIHIHGDGFIHKHGFKHIHIHGFKHIFKJIFKJMJIHKJIFIFKJIFKHKHIHIFIHKHKHIFIFIHKHGFEBGFIFIHGDEDGDGFGFGDGFGFGFGDGFGDGDGFGDIFIFGDGDIDIFGDGDEDGBIDIFKFKDIDIFIBIBKDKBIBIDGBKBIBKBIBIBKBI@GBGBI@IBG@G@I@G@I@I@K@G?G@I?IAI?K?M?K?K?K?M?K?G?KAMAI?K?K?K?K?I?K?K?K?K?K?M?I?K?K?K@I?I?G?K?I?I?K@M?K?K?I?G?I?I?I@K?I?E?ICIEG?M?Q?K?O?M?O?O?O?O?Q?O?O?Q?O?Q?O?M?M?M?M?O?O?O?O?O?O?O?M?M?Q?M?I?M?M?I?O?M?M?K?G?K?I?C??HAJ?F?H?H?N?T?J?L?N?L?LAN?L?L?L?L?N?N?N?L?L?N?L?P?P?R?P?R?R?L?L?N?P?R?PAN?R?L?P?L?JAH?H@J?J?L?L?P?H@P?N?R?L?N?J?L?L?J?J?J?J?J?L@JAJ@LAL@J?L?L?J?H?J?L?L?J?N?L?L?N?L?N@J?L@J@L@N@LBL@L@HBL@L@LBL@LBN@JG?I?I?K?I?I?I?I?G?K?I?I?G?@H?L?FH?F?H?DAF@FAF?H?F?H?F?H?F?H?D?";
+            int resultadosdebusqueda = 0;
+            //string encodePolyline = "ho|lBnctkLMWSYUYMWMWU_@QSIOMQQYIKW_@UYOQGMOUQ[QUKQOWU]QYMSSYS_@OWQYS[MS[i@Sg@g@o@w@}Aq@cA_A{Au@eAo@wAm@{@WU[PSLc@\\a@Xg@^c@^m@f@c@\\m@b@o@h@m@^k@b@s@f@o@j@m@j@e@^a@^o@j@s@l@a@^OLGCK_@";
             List<LatLng> polylines = new List<LatLng>();
             LatLng PosicionActual = new LatLng();
             LatLng Final = new LatLng();
             //PosicionActual.Latitude = Convert.ToDouble(InicioLat);
             //PosicionActual.Longitude = Convert.ToDouble(InicioLng);
-            PosicionActual.Latitude = -18.00688;
-            PosicionActual.Longitude = -70.22784;
+            PosicionActual.Latitude = -18.075603; //-18.076570507937948  -18.00688
+            PosicionActual.Longitude = -70.249347;
 
             // -18.0021259,-70.2259489 - 18.0048472,-70.2286921
             Final.Latitude = Convert.ToDouble(Latitud);
             Final.Longitude = Convert.ToDouble(Longitud);
             db.Configuration.ProxyCreationEnabled = false;
             var rutas = db.Ubicacion.ToList();
-            //foreach (var rut in rutas)
+            var transportePublico = db.Transporte.ToList();
+            //foreach (var item in transportePublico)
             //{
-            //    LatLng point = new LatLng();
-            //    point.Ubicacion = rut.Ubicacion1;
-            //    point.Latitude = Convert.ToDouble(rut.Latitud);
-            //    point.Longitude = Convert.ToDouble(rut.Longitud);
-            //    polylines.Add(point);
+            //    foreach (var rut in rutas)
+            //    {
+            //        if(item.Id == rut.IdTransporte)
+            //        {
+            //            LatLng point = new LatLng();
+            //            point.Ubicacion = rut.Ubicacion1;
+            //            point.Latitude = Convert.ToDouble(rut.Latitud);
+            //            point.Longitude = Convert.ToDouble(rut.Longitud);
+            //            polylines.Add(point);
+            //        }
+            //    }
             //}
-            polylines = DecodePolyline(encodePolyline);
-            int resultadosdebusqueda = 0;
-            foreach (var objbut in polylines)
+            //polylines = DecodePolyline(encodePolyline);
+            //List<LatLng> rutaCoords = new List<LatLng>();
+            foreach (var transporte in transportePublico)
             {
-                bool condicionInicio = false;
-                bool condicionFinal = false;
-                LatLng point = new LatLng();
-                point.Latitude = objbut.Latitude;
-                point.Longitude = objbut.Longitude;
-                if (resultadosdebusqueda == 0)
+                LatLng punto = new LatLng();
+                punto.Latitude = Convert.ToDouble(transporte.Latitud);
+                punto.Longitude = Convert.ToDouble(transporte.Longitud);
+                polylines.Add(punto);
+                var rutasTransporte = rutas.Where(ruta => ruta.IdTransporte == transporte.Id);                
+                foreach (var ruta in rutasTransporte)
                 {
-                    condicionInicio = consultaPuntoCerca(0.00180, point, PosicionActual); //donde me encuentro
-                    condicionFinal = consultaPuntoCerca(0.00180, point, Final); //donde quiero ir
+                    LatLng cordenada = new LatLng();
+                    cordenada.Ubicacion = ruta.Ubicacion1;
+                    cordenada.Latitude = Convert.ToDouble(ruta.Latitud);
+                    cordenada.Longitude = Convert.ToDouble(ruta.Longitud);
+                    polylines.Add(cordenada);
                 }
+                foreach (var objbut in polylines)
+                {
+                    bool condicionInicio = false;
+                    bool condicionFinal = false;
+                    LatLng point = new LatLng();
+                    point.Latitude = objbut.Latitude;
+                    point.Longitude = objbut.Longitude;
+                    if (resultadosdebusqueda == 0)
+                    {
+                        condicionInicio = consultaPuntoCerca(0.00180, point, PosicionActual); //donde me encuentro
+                        condicionFinal = consultaPuntoCerca(0.00180, point, Final); //donde quiero ir
+                    }
 
-                if (condicionFinal && condicionInicio)
-                {
-                    resultadosdebusqueda++;
-                    return Json(new { estado = true, mensaje = "Encontro ruta para su destino", data = polylines, JsonRequestBehavior.AllowGet });
+                    if (condicionFinal && condicionInicio)
+                    {
+                        resultadosdebusqueda++;
+                        return Json(new { estado = true, mensaje = "Encontro ruta para su destino", data = polylines, JsonRequestBehavior.AllowGet });
+                    }
                 }
-            }
+            }  
 
             //return Json(rutas, JsonRequestBehavior.AllowGet);
             return Json(new { estado = true, mensaje = "No encontro ruta para su destino", rutas = polylines, JsonRequestBehavior.AllowGet });

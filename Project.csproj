@@ -120,11 +120,13 @@
     <Content Include="styles\assets\image\iconn.ico" />
     <Content Include="styles\assets\image\imagenotfound.png" />
     <Content Include="styles\assets\image\kz_logo.jpg" />
+    <Content Include="styles\assets\image\logo.jpg" />
     <Content Include="styles\assets\image\logo.png" />
     <Content Include="styles\assets\image\logokz.png" />
     <Content Include="styles\assets\image\logo_big.png" />
     <Content Include="styles\assets\image\logo_mini.png" />
     <Content Include="styles\assets\image\subetulogo.jpg" />
+    <Content Include="styles\assets\image\transporte.png" />
     <Content Include="styles\assets\js\app.js" />
     <Content Include="styles\assets\js\Metodos\General.js" />
     <Content Include="styles\assets\plugins\Autocomplete\jquery-ui.css" />
@@ -863,6 +865,8 @@
     </Compile>
     <Compile Include="Models\LatLng.cs" />
     <Compile Include="Models\Notify.cs" />
+    <Compile Include="Models\TransporteViewModel.cs" />
+    <Compile Include="Models\UbicacionViewModel.cs" />
     <Compile Include="Models\Usuario.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

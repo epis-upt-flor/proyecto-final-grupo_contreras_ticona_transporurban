@@ -94,8 +94,8 @@
                 {
                     case 2:
                         @*<li class="nav-item">
-                            @Html.ActionLink("GUIA DE RUTAS", "Index", "Clientes", null, new { @class = "navbar-nav-link" })
-                        </li>*@
+                                @Html.ActionLink("GUIA DE RUTAS", "Index", "Clientes", null, new { @class = "navbar-nav-link" })
+                            </li>*@
                         <li class="nav-item">
                             @Html.ActionLink("CALCULO DE RUTAS", "Polilines", "Map", null, new { @class = "navbar-nav-link" })
                         </li>
@@ -103,8 +103,8 @@
                             @Html.ActionLink("NOTIFICACIONES", "Index", "Notificaciones", null, new { @class = "navbar-nav-link" })
                         </li>
                         @*<li class="nav-item">
-                            @Html.ActionLink("CALCULO DE RUTAS", "", "", null, new { @class = "navbar-nav-link" })
-                        </li>*@
+                                @Html.ActionLink("CALCULO DE RUTAS", "", "", null, new { @class = "navbar-nav-link" })
+                            </li>*@
                         <li class="nav-item">
                             @Html.ActionLink("COMPARTIR INCIDENCIAS", "", "", null, new { @class = "navbar-nav-link" })
                         </li>
@@ -126,6 +126,7 @@
     </div>
 
     <!-- Page content -->
+    <!-- CAMBIO DE COLOR PARA TODAS LAS PAGINAS -->
     <div class="page-content">
         <div class="content-wrapper">
             @RenderSection("header", required: false)
