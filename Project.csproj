@@ -52,6 +52,12 @@
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\lib\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Configuration.ConfigurationBuilders.Base, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Configuration.ConfigurationBuilders.Base.2.0.0\lib\Net471\Microsoft.Configuration.ConfigurationBuilders.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Configuration.ConfigurationBuilders.UserSecrets, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Configuration.ConfigurationBuilders.UserSecrets.2.0.0\lib\Net471\Microsoft.Configuration.ConfigurationBuilders.UserSecrets.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Web.Infrastructure, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Web.Infrastructure.2.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
@@ -118,13 +124,7 @@
     <Content Include="styles\assets\image\dimension.png" />
     <Content Include="styles\assets\image\iconn.ico" />
     <Content Include="styles\assets\image\imagenotfound.png" />
-    <Content Include="styles\assets\image\kz_logo.jpg" />
     <Content Include="styles\assets\image\logo.jpg" />
-    <Content Include="styles\assets\image\logo.png" />
-    <Content Include="styles\assets\image\logokz.png" />
-    <Content Include="styles\assets\image\logo_big.png" />
-    <Content Include="styles\assets\image\logo_mini.png" />
-    <Content Include="styles\assets\image\subetulogo.jpg" />
     <Content Include="styles\assets\image\transporte.png" />
     <Content Include="styles\assets\js\app.js" />
     <Content Include="styles\assets\js\Metodos\General.js" />
@@ -227,135 +227,6 @@
     <Content Include="styles\global_assets\css\icons\material\fonts\material-icons119d.svg" />
     <Content Include="styles\global_assets\css\icons\material\styles.min.css" />
     <Content Include="styles\global_assets\demo_data\maps\vector\gdp_demo_data.js" />
-    <Content Include="styles\global_assets\images\backgrounds\boxed_bg.png" />
-    <Content Include="styles\global_assets\images\backgrounds\panel_bg.png" />
-    <Content Include="styles\global_assets\images\backgrounds\seamless.png" />
-    <Content Include="styles\global_assets\images\brands\amazon.png" />
-    <Content Include="styles\global_assets\images\brands\bing.png" />
-    <Content Include="styles\global_assets\images\brands\dribbble.png" />
-    <Content Include="styles\global_assets\images\brands\facebook.png" />
-    <Content Include="styles\global_assets\images\brands\spotify.png" />
-    <Content Include="styles\global_assets\images\brands\twitter.png" />
-    <Content Include="styles\global_assets\images\brands\youtube.png" />
-    <Content Include="styles\global_assets\images\demo\blog\1.jpg" />
-    <Content Include="styles\global_assets\images\demo\blog\10.jpg" />
-    <Content Include="styles\global_assets\images\demo\blog\11.jpg" />
-    <Content Include="styles\global_assets\images\demo\blog\12.jpg" />
-    <Content Include="styles\global_assets\images\demo\blog\2.jpg" />
-    <Content Include="styles\global_assets\images\demo\blog\3.jpg" />
-    <Content Include="styles\global_assets\images\demo\blog\4.jpg" />
-    <Content Include="styles\global_assets\images\demo\blog\5.jpg" />
-    <Content Include="styles\global_assets\images\demo\blog\6.jpg" />
-    <Content Include="styles\global_assets\images\demo\blog\7.jpg" />
-    <Content Include="styles\global_assets\images\demo\blog\8.jpg" />
-    <Content Include="styles\global_assets\images\demo\blog\9.jpg" />
-    <Content Include="styles\global_assets\images\demo\brands\amazon.png" />
-    <Content Include="styles\global_assets\images\demo\brands\cnn.png" />
-    <Content Include="styles\global_assets\images\demo\brands\dell.png" />
-    <Content Include="styles\global_assets\images\demo\brands\facebook.png" />
-    <Content Include="styles\global_assets\images\demo\brands\ibm.png" />
-    <Content Include="styles\global_assets\images\demo\brands\ing.png" />
-    <Content Include="styles\global_assets\images\demo\brands\microsoft.png" />
-    <Content Include="styles\global_assets\images\demo\brands\northface.png" />
-    <Content Include="styles\global_assets\images\demo\brands\transferwise.png" />
-    <Content Include="styles\global_assets\images\demo\brands\uber.png" />
-    <Content Include="styles\global_assets\images\demo\cover2.jpg" />
-    <Content Include="styles\global_assets\images\demo\cover3.jpg" />
-    <Content Include="styles\global_assets\images\demo\flat\1.png" />
-    <Content Include="styles\global_assets\images\demo\flat\10.png" />
-    <Content Include="styles\global_assets\images\demo\flat\11.png" />
-    <Content Include="styles\global_assets\images\demo\flat\12.png" />
-    <Content Include="styles\global_assets\images\demo\flat\13.png" />
-    <Content Include="styles\global_assets\images\demo\flat\14.png" />
-    <Content Include="styles\global_assets\images\demo\flat\15.png" />
-    <Content Include="styles\global_assets\images\demo\flat\16.png" />
-    <Content Include="styles\global_assets\images\demo\flat\17.png" />
-    <Content Include="styles\global_assets\images\demo\flat\18.png" />
-    <Content Include="styles\global_assets\images\demo\flat\19.png" />
-    <Content Include="styles\global_assets\images\demo\flat\2.png" />
-    <Content Include="styles\global_assets\images\demo\flat\20.png" />
-    <Content Include="styles\global_assets\images\demo\flat\21.png" />
-    <Content Include="styles\global_assets\images\demo\flat\22.png" />
-    <Content Include="styles\global_assets\images\demo\flat\23.png" />
-    <Content Include="styles\global_assets\images\demo\flat\24.png" />
-    <Content Include="styles\global_assets\images\demo\flat\25.png" />
-    <Content Include="styles\global_assets\images\demo\flat\3.png" />
-    <Content Include="styles\global_assets\images\demo\flat\4.png" />
-    <Content Include="styles\global_assets\images\demo\flat\5.png" />
-    <Content Include="styles\global_assets\images\demo\flat\6.png" />
-    <Content Include="styles\global_assets\images\demo\flat\7.png" />
-    <Content Include="styles\global_assets\images\demo\flat\8.png" />
-    <Content Include="styles\global_assets\images\demo\flat\9.png" />
-    <Content Include="styles\global_assets\images\demo\images\1.png" />
-    <Content Include="styles\global_assets\images\demo\images\10.png" />
-    <Content Include="styles\global_assets\images\demo\images\2.png" />
-    <Content Include="styles\global_assets\images\demo\images\3.png" />
-    <Content Include="styles\global_assets\images\demo\images\4.png" />
-    <Content Include="styles\global_assets\images\demo\images\5.png" />
-    <Content Include="styles\global_assets\images\demo\images\6.png" />
-    <Content Include="styles\global_assets\images\demo\images\7.png" />
-    <Content Include="styles\global_assets\images\demo\images\8.png" />
-    <Content Include="styles\global_assets\images\demo\images\9.png" />
-    <Content Include="styles\global_assets\images\demo\images\blog1.jpg" />
-    <Content Include="styles\global_assets\images\demo\images\blog2.jpg" />
-    <Content Include="styles\global_assets\images\demo\images\blog3.jpg" />
-    <Content Include="styles\global_assets\images\demo\images\blog4.jpg" />
-    <Content Include="styles\global_assets\images\demo\images\blog5.jpg" />
-    <Content Include="styles\global_assets\images\demo\images\for_crop.png" />
-    <Content Include="styles\global_assets\images\demo\products\1.jpg" />
-    <Content Include="styles\global_assets\images\demo\products\10.jpg" />
-    <Content Include="styles\global_assets\images\demo\products\11.jpg" />
-    <Content Include="styles\global_assets\images\demo\products\12.jpg" />
-    <Content Include="styles\global_assets\images\demo\products\13.jpg" />
-    <Content Include="styles\global_assets\images\demo\products\14.jpg" />
-    <Content Include="styles\global_assets\images\demo\products\2.jpg" />
-    <Content Include="styles\global_assets\images\demo\products\3.jpg" />
-    <Content Include="styles\global_assets\images\demo\products\4.jpg" />
-    <Content Include="styles\global_assets\images\demo\products\5.jpg" />
-    <Content Include="styles\global_assets\images\demo\products\6.jpg" />
-    <Content Include="styles\global_assets\images\demo\products\7.jpg" />
-    <Content Include="styles\global_assets\images\demo\products\8.jpg" />
-    <Content Include="styles\global_assets\images\demo\products\9.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face1.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face10.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face11.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face12.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face13.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face14.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face15.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face16.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face17.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face18.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face19.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face2.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face20.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face21.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face22.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face23.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face24.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face25.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face3.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face4.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face5.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face6.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face7.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face8.jpg" />
-    <Content Include="styles\global_assets\images\demo\users\face9.jpg" />
-    <Content Include="styles\global_assets\images\demo\video1.png" />
-    <Content Include="styles\global_assets\images\demo\video2.png" />
-    <Content Include="styles\global_assets\images\dribbble.png" />
-    <Content Include="styles\global_assets\images\lang\de.png" />
-    <Content Include="styles\global_assets\images\lang\es.png" />
-    <Content Include="styles\global_assets\images\lang\gb.png" />
-    <Content Include="styles\global_assets\images\lang\it.png" />
-    <Content Include="styles\global_assets\images\lang\ru.png" />
-    <Content Include="styles\global_assets\images\lang\ua.png" />
-    <Content Include="styles\global_assets\images\login_cover.jpg" />
-    <Content Include="styles\global_assets\images\logo_dark.png" />
-    <Content Include="styles\global_assets\images\logo_demo.png" />
-    <Content Include="styles\global_assets\images\logo_light.png" />
-    <Content Include="styles\global_assets\images\pie-chart.png" />
-    <Content Include="styles\global_assets\images\signature.png" />
     <Content Include="styles\global_assets\js\demo_pages\alpaca_advanced.js" />
     <Content Include="styles\global_assets\js\demo_pages\alpaca_basic.js" />
     <Content Include="styles\global_assets\js\demo_pages\alpaca_controls.js" />
@@ -943,6 +814,7 @@
     <Content Include="Views\Map\About.cshtml" />
     <Content Include="Views\Notificaciones\Index.cshtml" />
     <Content Include="Views\Map\Polilines.cshtml" />
+    <None Include="Properties\PublishProfiles\CORRPATHTACNA - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -952,6 +824,15 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="styles\global_assets\images\backgrounds\" />
+    <Folder Include="styles\global_assets\images\brands\" />
+    <Folder Include="styles\global_assets\images\demo\blog\" />
+    <Folder Include="styles\global_assets\images\demo\brands\" />
+    <Folder Include="styles\global_assets\images\demo\flat\" />
+    <Folder Include="styles\global_assets\images\demo\images\" />
+    <Folder Include="styles\global_assets\images\demo\products\" />
+    <Folder Include="styles\global_assets\images\demo\users\" />
+    <Folder Include="styles\global_assets\images\lang\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
