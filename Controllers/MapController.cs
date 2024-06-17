@@ -151,7 +151,7 @@ namespace Project.Controllers
                 }
                 return new JsonResult { Data = new { estado = estado } };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 estado = false;
             }
@@ -171,7 +171,7 @@ namespace Project.Controllers
             return Json(rutas, JsonRequestBehavior.AllowGet);
             //return new JsonResult { Data = rutas, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
         }
-        public ActionResult listTransports()
+        public ActionResult ListTransports()
         {
             db.Configuration.ProxyCreationEnabled = false;
             var transports = db.Transporte.ToList();

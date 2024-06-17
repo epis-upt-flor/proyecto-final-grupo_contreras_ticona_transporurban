@@ -4,8 +4,8 @@
     ViewBag.Title = "Polilines";
     List<Project.DTO.Transporte> transportes = ViewBag.Transportes;
     Project.DTO.Transporte transporte = ViewBag.Transporte;
-    double latitudLinea = 0;
-    double longitudLinea = 0;
+    //double latitudLinea = 0;
+    //double longitudLinea = 0;
     string iconoUrl = Url.Content("~/styles/assets/image/autobus.png");
 }
 
@@ -27,7 +27,7 @@
 <body>
   
     <!-- /CAMBIO DE COLOR -->
-    <div class="container" style="background-color:">
+    <div class="container" style="background-color: #f3eeee">
         <div class="row">
             <div class="col-md-4">
                 <form id="CoincidenciaForm" action="/Map/RutasCerca" method="post">
